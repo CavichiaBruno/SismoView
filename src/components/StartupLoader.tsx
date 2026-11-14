@@ -62,7 +62,6 @@ export function StartupLoader({
         />
       ) : (
         <div className="startup-loader__start-screen">
-          <LanguageSelector className="language-selector language-selector--startup" />
           <BlackHoleHeroSection
             className="startup-loader__blackhole"
             steps={180}
@@ -85,6 +84,7 @@ export function StartupLoader({
               {translate('¿Quieres activar el sonido para disfrutar la experiencia completa?')}
             </p>
             <div className="startup-loader__start-actions">
+              <LanguageSelector className="language-selector language-selector--startup" />
               <button
                 className="startup-loader__start-button startup-loader__start-button--quiet"
                 type="button"

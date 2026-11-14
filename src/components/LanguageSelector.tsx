@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { changeAppLanguage, type AppLanguage } from '../i18n'
 
@@ -7,25 +8,40 @@ type LanguageSelectorProps = {
 
 export function LanguageSelector({ className }: LanguageSelectorProps) {
   const { i18n } = useTranslation()
+  const labelId = useId()
+  const selectedLanguage = i18n.language.startsWith('en') ? 'en' : 'es'
 
   return (
-    <label className={className ?? 'language-selector'}>
-      <span className="language-selector__label">
+    <div className={className ?? 'language-selector'}>
+      <span className="language-selector__label" id={labelId}>
         {i18n.language.startsWith('en') ? 'Language' : 'Idioma'}
       </span>
-      <select
-        aria-label={i18n.language.startsWith('en') ? 'Select language' : 'Elegir idioma'}
-        value={i18n.language.startsWith('en') ? 'en' : 'es'}
-        onChange={(event) => {
-          const language = event.currentTarget.value
-          if (language === 'en' || language === 'es') {
-            void changeAppLanguage(language satisfies AppLanguage)
-          }
-        }}
+      <div
+        className="language-selector__options"
+        role="group"
+        aria-labelledby={labelId}
       >
-        <option value="es">Español</option>
-        <option value="en">English</option>
-      </select>
-    </label>
+        <button
+          className="language-selector__option"
+          type="button"
+          aria-label="Español"
+          aria-pressed={selectedLanguage === 'es'}
+          onClick={() => void changeAppLanguage('es' satisfies AppLanguage)}
+        >
+          <span aria-hidden="true">🇪🇸</span>
+          <span>ES</span>
+        </button>
+        <button
+          className="language-selector__option"
+          type="button"
+          aria-label="English"
+          aria-pressed={selectedLanguage === 'en'}
+          onClick={() => void changeAppLanguage('en' satisfies AppLanguage)}
+        >
+          <span aria-hidden="true">🇬🇧</span>
+          <span>EN</span>
+        </button>
+      </div>
+    </div>
   )
 }

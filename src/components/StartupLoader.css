@@ -23,32 +23,78 @@
 .language-selector {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   color: #fff;
-  font: 500 0.82rem/1.2 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font: 600 0.82rem/1.2 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-.language-selector select {
-  min-height: 2.25rem;
-  padding: 0.35rem 0.65rem;
-  border: 1px solid rgb(255 255 255 / 42%);
+.language-selector__label {
+  color: rgb(255 255 255 / 74%);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.language-selector__options {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.language-selector__option {
+  display: inline-flex;
+  min-width: 3.25rem;
+  min-height: 2.45rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgb(3 5 8 / 78%);
-  color: inherit;
+  background: transparent;
+  color: #fff;
   font: inherit;
   cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
-.language-selector select:focus-visible {
+.language-selector__option > span:first-child {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.language-selector__option[aria-pressed='true'] {
+  border-color: rgb(255 255 255 / 90%);
+  background: #fff;
+  color: #101820;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 24%);
+}
+
+.language-selector__option:hover {
+  border-color: rgb(255 255 255 / 65%);
+  background: rgb(255 255 255 / 14%);
+}
+
+.language-selector__option[aria-pressed='true']:hover {
+  background: #e4f3ff;
+}
+
+.language-selector__option:focus-visible {
   outline: 2px solid #73ceff;
   outline-offset: 3px;
 }
 
 .language-selector--startup {
-  position: absolute;
-  z-index: 2;
-  top: max(1.25rem, env(safe-area-inset-top));
-  right: max(1.25rem, env(safe-area-inset-right));
+  flex: 0 0 auto;
+  padding: 0.25rem 0.4rem 0.25rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 999px;
+  background: rgb(3 5 8 / 58%);
+  backdrop-filter: blur(12px);
 }
 
 .startup-loader__blackhole {
@@ -61,7 +107,7 @@
   position: relative;
   z-index: 1;
   display: flex;
-  width: min(90vw, 42rem);
+  width: min(94vw, 48rem);
   flex-direction: column;
   align-items: center;
   gap: 0.85rem;
@@ -100,11 +146,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 0.55rem;
 }
 
 .startup-loader__start-button {
-  padding: 0.8rem 2rem;
+  padding: 0.8rem 1.2rem;
   border: 1px solid rgb(255 255 255 / 78%);
   border-radius: 999px;
   background: #fff;
@@ -142,6 +189,10 @@
   .startup-loader__start-actions {
     flex-direction: column;
     width: 100%;
+  }
+
+  .language-selector--startup {
+    margin-bottom: 0.25rem;
   }
 
   .startup-loader__start-button {
