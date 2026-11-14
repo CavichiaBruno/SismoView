@@ -1,0 +1,496 @@
+import { useEffect, useRef, useState } from 'react'
+import {
+  Cartesian3,
+  Color,
+  createWorldImageryAsync,
+  createWorldTerrainAsync,
+  EasingFunction,
+  EllipsoidTerrainProvider,
+  HeadingPitchRange,
+  Ion,
+  Math as CesiumMath,
+  Matrix4,
+  Rectangle,
+  SplitDirection,
+  SingleTileImageryProvider,
+  Viewer,
+  type ImageryLayer,
+  type ImageryProvider,
+} from 'cesium'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { coherenceOverlay } from '../data/coherence'
+import { deformationComponents } from '../data/deformationComponents'
+import { displacementOverlay } from '../data/displacement'
+import { faultOverlay } from '../data/faultGradients'
+import { fringeOverlay } from '../data/fringes'
+import { gcovOverlays } from '../data/gcov'
+import { terrainBlock } from '../data/terrainBlock'
+import './CoverageQualityMap.css'
+
+type SlideIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+type LayerSource = {
+  image: string
+  bounds: { west: number; south: number; east: number; north: number }
+}
+type Slide = {
+  title: string
+  leftLabel: string
+  rightLabel?: string
+  left: LayerSource
+  right?: LayerSource
+  note: string
+  focus?: { west: number; south: number; east: number; north: number }
+}
+
+const SLIDES: Slide[] = [
+  {
+    title: 'GCOV HH · misma polarización',
+    leftLabel: '13 jun 2026',
+    rightLabel: '17 sep 2026',
+    left: gcovOverlays.hhBefore,
+    right: gcovOverlays.hhAfter,
+    note: 'Retrodispersión; no mide desplazamiento.',
+  },
+  {
+    title: 'GCOV HV · misma polarización',
+    leftLabel: '13 jun 2026',
+    rightLabel: '17 sep 2026',
+    left: gcovOverlays.hvBefore,
+    right: gcovOverlays.hvAfter,
+    note: 'Retrodispersión; no mide desplazamiento.',
+  },
+  {
+    title: 'Desplazamiento LOS · órbitas distintas',
+    leftLabel: 'Ascendente',
+    rightLabel: 'Descendente',
+    left: deformationComponents.losAscending,
+    right: deformationComponents.losDescending,
+    note: 'Misma magnitud proyectada; cambia la geometría.',
+  },
+  {
+    title: 'Gradiente de fase · pasadas distintas',
+    leftLabel: 'T162A',
+    rightLabel: 'T54D',
+    left: faultOverlay.gradients.t162a,
+    right: faultOverlay.gradients.t54d,
+    focus: {
+      west: -68.57,
+      south: 10.44,
+      east: -68.20,
+      north: 10.56,
+    },
+    note: 'Patrones de fase; no es diferencia directa de desplazamiento.',
+  },
+  {
+    title: 'Interferograma · fase envuelta',
+    leftLabel: 'Fase',
+    left: fringeOverlay,
+    note: 'La fase envuelta no equivale a desplazamiento en cm.',
+  },
+  {
+    title: 'Coherencia · calidad de señal',
+    leftLabel: 'Coherencia',
+    left: coherenceOverlay,
+    note: 'Indica calidad de señal; no mide movimiento.',
+  },
+  {
+    title: 'Desplazamiento · línea de visión',
+    leftLabel: 'Desplazamiento LOS',
+    left: displacementOverlay,
+    note: 'Movimiento proyectado en la línea de visión del radar.',
+  },
+  {
+    title: 'Desplazamiento · componente este-oeste',
+    leftLabel: 'Este-oeste',
+    left: deformationComponents.eastWest,
+    note: 'Componente horizontal del desplazamiento.',
+  },
+  {
+    title: 'Desplazamiento · componente vertical',
+    leftLabel: 'Vertical',
+    left: deformationComponents.vertical,
+    note: 'Componente vertical del desplazamiento.',
+  },
+]
+
+const LAYER_TRANSITION_MS = 1_000
+const LAYER_INTERVAL_MS = 8_000
+const PREVIEW_RESOLUTION_SCALE = 1
+const TERRAIN_EXAGGERATION = 8
+const TERRAIN_CAMERA_RANGE_METERS = 145_000
+
+function rectangleFor(bounds: { west: number; south: number; east: number; north: number }) {
+  return Rectangle.fromDegrees(bounds.west, bounds.south, bounds.east, bounds.north)
+}
+
+export function CoverageQualityMap() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const viewerRef = useRef<Viewer | null>(null)
+  const activeSlideRef = useRef<SlideIndex>(0)
+  const selectSlideRef = useRef<(index: SlideIndex) => void>(() => {})
+  const [activeSlide, setActiveSlide] = useState<SlideIndex>(0)
+  const [comparisonPosition, setComparisonPosition] = useState(0.5)
+  const [isReady, setIsReady] = useState(false)
+  const [loadError, setLoadError] = useState(false)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    let viewer: Viewer
+    try {
+      viewer = new Viewer(container, {
+        animation: false,
+        baseLayer: false,
+        baseLayerPicker: false,
+        fullscreenButton: false,
+        geocoder: false,
+        homeButton: false,
+        infoBox: false,
+        navigationHelpButton: false,
+        sceneModePicker: false,
+        selectionIndicator: false,
+        timeline: false,
+        scene3DOnly: true,
+        requestRenderMode: true,
+        maximumRenderTimeChange: Number.POSITIVE_INFINITY,
+        msaaSamples: 2,
+        terrainProvider: new EllipsoidTerrainProvider(),
+      })
+    } catch (error) {
+      console.error('Unable to initialize the coverage and quality preview.', error)
+      setLoadError(true)
+      return
+    }
+
+    viewerRef.current = viewer
+    viewer.scene.splitPosition = 0.5
+    viewer.resolutionScale = PREVIEW_RESOLUTION_SCALE
+    viewer.scene.globe.baseColor = Color.fromCssColorString('#101b2a')
+    viewer.scene.globe.showGroundAtmosphere = true
+    viewer.scene.globe.enableLighting = true
+    viewer.scene.globe.depthTestAgainstTerrain = true
+    viewer.scene.globe.maximumScreenSpaceError = 1.5
+    viewer.scene.verticalExaggeration = TERRAIN_EXAGGERATION
+
+    const cameraController = viewer.scene.screenSpaceCameraController
+    cameraController.enableRotate = false
+    cameraController.enableTranslate = false
+    cameraController.enableZoom = false
+    cameraController.enableTilt = false
+    cameraController.enableLook = false
+
+    const terrainCenterLongitude = (terrainBlock.grid.west + terrainBlock.grid.east) / 2
+    const terrainCenterLatitude = (terrainBlock.grid.south + terrainBlock.grid.north) / 2
+    const terrainCenter = Cartesian3.fromDegrees(terrainCenterLongitude, terrainCenterLatitude)
+    viewer.camera.lookAt(
+      terrainCenter,
+      new HeadingPitchRange(
+        CesiumMath.toRadians(15),
+        CesiumMath.toRadians(-20),
+        TERRAIN_CAMERA_RANGE_METERS,
+      ),
+    )
+
+    let disposed = false
+    let transitionTimeout = 0
+    let opacityFrame = 0
+    let readinessTimeout = 0
+    const ionToken = import.meta.env.VITE_CESIUM_ION_TOKEN?.trim()
+    if (ionToken) Ion.defaultAccessToken = ionToken
+
+    const terrainPromise = ionToken
+      ? createWorldTerrainAsync()
+      : Promise.resolve(null)
+
+    const loadBaseImagery = () => {
+      void createWorldImageryAsync()
+        .then((provider) => {
+          if (disposed || viewer.isDestroyed()) return
+          viewer.imageryLayers.addImageryProvider(provider, 0)
+          viewer.scene.requestRender()
+        })
+        .catch((error: unknown) => {
+          console.error('Unable to load base imagery in the coverage and quality preview.', error)
+        })
+    }
+
+    let removeReadinessListener = () => {}
+    let startLayerTransition = () => {}
+    let mapReady = false
+    const markReady = () => {
+      if (mapReady || !viewer.scene.globe.tilesLoaded) return
+      mapReady = true
+      setIsReady(true)
+      window.clearTimeout(readinessTimeout)
+      removeReadinessListener()
+      loadBaseImagery()
+      startLayerTransition()
+    }
+
+    const loadLayers = async () => {
+      const imageryPromises = SLIDES.flatMap((slide) => [
+        SingleTileImageryProvider.fromUrl(slide.left.image, {
+          rectangle: rectangleFor(slide.left.bounds),
+        }),
+        ...(slide.right
+          ? [SingleTileImageryProvider.fromUrl(slide.right.image, {
+              rectangle: rectangleFor(slide.right.bounds),
+            })]
+          : []),
+      ])
+      const [results, terrainResults] = await Promise.all([
+        Promise.allSettled(imageryPromises),
+        Promise.allSettled([terrainPromise]),
+      ])
+
+      if (disposed || viewer.isDestroyed()) return
+
+      const terrainResult = terrainResults[0]
+      if (terrainResult.status === 'fulfilled' && terrainResult.value) {
+        viewer.terrainProvider = terrainResult.value
+        viewer.scene.verticalExaggeration = TERRAIN_EXAGGERATION
+      } else if (terrainResult.status === 'rejected') {
+        console.error('Unable to load terrain in the coverage and quality preview.', terrainResult.reason)
+        if (ionToken) {
+          disposed = true
+          window.clearTimeout(readinessTimeout)
+          viewer.destroy()
+          setLoadError(true)
+          return
+        }
+      }
+
+      const createLayer = (
+        result: PromiseSettledResult<ImageryProvider>,
+        label: string,
+        splitDirection: SplitDirection,
+        alpha: number,
+      ): ImageryLayer | null => {
+        if (result.status === 'rejected') {
+          console.error(`Unable to load the ${label} preview.`, result.reason)
+          return null
+        }
+        const layer = viewer.imageryLayers.addImageryProvider(result.value)
+        layer.splitDirection = splitDirection
+        layer.alpha = alpha
+        return layer
+      }
+
+      const slideLayers: { left: ImageryLayer; right?: ImageryLayer }[] = []
+      let resultIndex = 0
+      for (let index = 0; index < SLIDES.length; index += 1) {
+        const slide = SLIDES[index]
+        const left = createLayer(
+          results[resultIndex++],
+          `${slide.title} (${slide.leftLabel})`,
+          slide.right ? SplitDirection.LEFT : SplitDirection.NONE,
+          index === 0 ? 1 : 0,
+        )
+        const right = slide.right
+          ? createLayer(
+              results[resultIndex++],
+              `${slide.title} (${slide.rightLabel})`,
+              SplitDirection.RIGHT,
+              index === 0 ? 1 : 0,
+            )
+          : undefined
+        if (!left || (slide.right && !right)) {
+          disposed = true
+          window.clearTimeout(readinessTimeout)
+          viewer.destroy()
+          setLoadError(true)
+          return
+        }
+        slideLayers.push(right ? { left, right } : { left })
+      }
+
+      removeReadinessListener = viewer.scene.postRender.addEventListener(markReady)
+      viewer.scene.requestRender()
+      const selectSlide = (nextIndex: SlideIndex) => {
+        if (disposed || viewer.isDestroyed() || nextIndex === activeSlideRef.current) return
+        window.clearTimeout(transitionTimeout)
+        window.cancelAnimationFrame(opacityFrame)
+        const fromLayers = slideLayers[activeSlideRef.current]
+        const toLayers = slideLayers[nextIndex]
+        fromLayers.left.alpha = 1
+        if (fromLayers.right) fromLayers.right.alpha = 1
+        toLayers.left.alpha = 0
+        if (toLayers.right) toLayers.right.alpha = 0
+        const startedAt = performance.now()
+
+        viewer.camera.cancelFlight()
+        viewer.camera.lookAtTransform(Matrix4.IDENTITY)
+        const focus = SLIDES[nextIndex].focus
+        if (focus) {
+          viewer.camera.flyTo({
+            destination: rectangleFor(focus),
+            orientation: {
+              heading: 0,
+              pitch: -CesiumMath.PI_OVER_TWO,
+              roll: 0,
+            },
+            duration: 2.4,
+            easingFunction: EasingFunction.CUBIC_IN_OUT,
+          })
+        } else {
+          viewer.camera.lookAt(
+            Cartesian3.fromDegrees(terrainCenterLongitude, terrainCenterLatitude),
+            new HeadingPitchRange(
+              CesiumMath.toRadians(15),
+              CesiumMath.toRadians(-20),
+              TERRAIN_CAMERA_RANGE_METERS,
+            ),
+          )
+        }
+        activeSlideRef.current = nextIndex
+        setActiveSlide(nextIndex)
+
+        const animateOpacity = (now: number) => {
+          const progress = Math.min((now - startedAt) / LAYER_TRANSITION_MS, 1)
+          fromLayers.left.alpha = 1 - progress
+          if (fromLayers.right) fromLayers.right.alpha = 1 - progress
+          toLayers.left.alpha = progress
+          if (toLayers.right) toLayers.right.alpha = progress
+          viewer.scene.requestRender()
+
+          if (progress < 1) {
+            opacityFrame = window.requestAnimationFrame(animateOpacity)
+          } else {
+            const nextSlide = ((nextIndex + 1) % SLIDES.length) as SlideIndex
+            transitionTimeout = window.setTimeout(
+              () => selectSlide(nextSlide),
+              LAYER_INTERVAL_MS,
+            )
+          }
+        }
+
+        opacityFrame = window.requestAnimationFrame(animateOpacity)
+      }
+
+      selectSlideRef.current = selectSlide
+      startLayerTransition = () => {
+        const nextSlide = ((activeSlideRef.current + 1) % SLIDES.length) as SlideIndex
+        transitionTimeout = window.setTimeout(
+          () => selectSlide(nextSlide),
+          LAYER_INTERVAL_MS,
+        )
+      }
+    }
+
+    readinessTimeout = window.setTimeout(() => {
+      if (mapReady || disposed || viewer.isDestroyed()) return
+      console.error('Timed out while loading terrain and imagery in the coverage and quality preview.')
+      disposed = true
+      viewer.destroy()
+      setLoadError(true)
+    }, 30_000)
+
+    void loadLayers()
+
+    return () => {
+      disposed = true
+      window.clearTimeout(transitionTimeout)
+      window.clearTimeout(readinessTimeout)
+      window.cancelAnimationFrame(opacityFrame)
+      removeReadinessListener()
+      selectSlideRef.current = () => {}
+      viewerRef.current = null
+      if (!viewer.isDestroyed()) viewer.destroy()
+    }
+  }, [])
+
+  const updateComparisonPosition = (value: string) => {
+    const position = Number(value) / 100
+    setComparisonPosition(position)
+    const viewer = viewerRef.current
+    if (!viewer || viewer.isDestroyed()) return
+    viewer.scene.splitPosition = position
+    viewer.scene.requestRender()
+  }
+
+  const slide = SLIDES[activeSlide]
+
+  return (
+    <div className="dash-quality-map">
+      {loadError ? (
+        <div className="dash-quality-map__error" role="status">
+          No se pudo cargar la vista de cobertura y calidad.
+        </div>
+      ) : (
+        <div className={`dash-quality-map__frame${slide.right ? '' : ' dash-quality-map__frame--single'}`}>
+          <div
+            className="dash-quality-map__viewport"
+            ref={containerRef}
+            role="img"
+            aria-label={slide.right
+              ? `Comparación 3D: ${slide.title}; ${slide.leftLabel} frente a ${slide.rightLabel}`
+              : `Capa 3D: ${slide.title}`}
+          />
+          <div
+            className={`dash-quality-map__skeleton${isReady ? ' dash-quality-map__skeleton--hidden' : ''}`}
+            role="status"
+          >
+            <span>Preparando terreno y datos InSAR</span>
+          </div>
+          <div className="dash-quality-map__legend">
+            <span className="dash-quality-map__indicator" />
+            <span className="dash-quality-map__title" title={slide.title}>
+              {slide.title}
+            </span>
+            <div className="dash-quality-map__navigation" role="group" aria-label="Capas y comparaciones">
+              <button
+                type="button"
+                aria-label="Capa anterior"
+                disabled={!isReady}
+                onClick={() => selectSlideRef.current(
+                  ((activeSlide + SLIDES.length - 1) % SLIDES.length) as SlideIndex,
+                )}
+              >
+                <ChevronLeft size={12} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                aria-label="Siguiente capa"
+                disabled={!isReady}
+                onClick={() => selectSlideRef.current(
+                  ((activeSlide + 1) % SLIDES.length) as SlideIndex,
+                )}
+              >
+                <ChevronRight size={12} aria-hidden="true" />
+              </button>
+            </div>
+            <span className="dash-quality-map__mode">3D · ×8</span>
+          </div>
+          <div className="dash-quality-map__dates" aria-hidden="true">
+            <span>{slide.leftLabel}</span>
+            {slide.rightLabel && <span>{slide.rightLabel}</span>}
+          </div>
+          {slide.right && (
+            <>
+              <div
+                className="dash-quality-map__divider"
+                style={{ left: `${comparisonPosition * 100}%` }}
+                aria-hidden="true"
+              />
+              <input
+                className="dash-quality-map__range"
+                type="range"
+                min="5"
+                max="95"
+                step="1"
+                value={comparisonPosition * 100}
+                onChange={(event) => updateComparisonPosition(event.currentTarget.value)}
+                disabled={!isReady}
+                aria-label="Posición de la cortina para comparar las capas"
+              />
+            </>
+          )}
+          <div className="dash-quality-map__note" title={slide.note}>
+            {slide.note}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

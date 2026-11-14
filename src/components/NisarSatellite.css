@@ -1,0 +1,249 @@
+.nisar-experience {
+  position: fixed;
+  z-index: 84;
+  top: 3vh;
+  right: 18px;
+  bottom: 4vh;
+  left: clamp(480px, 38vw, 720px);
+  pointer-events: auto;
+  opacity: 0;
+  transform: scale(0.02);
+  transform-origin: center;
+  visibility: hidden;
+}
+
+.nisar-experience--entering {
+  visibility: visible;
+  animation: nisar-experience-pop 950ms both;
+}
+
+@keyframes nisar-experience-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.02);
+  }
+
+  22% {
+    opacity: 1;
+    transform: scale(0.22);
+  }
+
+  58% {
+    transform: scale(1.1, 0.9);
+  }
+
+  74% {
+    transform: scale(0.94, 1.06);
+  }
+
+  88% {
+    transform: scale(1.025, 0.975);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.nisar-model-stage {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: min(82vh, 760px);
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(170 200 223 / 15%);
+  border-radius: 4px;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(34 56 73 / 76%), transparent 68%),
+    linear-gradient(145deg, rgb(5 12 20 / 78%), rgb(7 15 24 / 88%));
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 5%),
+    0 18px 48px rgb(0 0 0 / 24%);
+}
+
+.nisar-context-model {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+}
+
+.nisar-skeleton-loader {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(34 56 73 / 76%), transparent 68%),
+    linear-gradient(145deg, rgb(5 12 20 / 96%), rgb(7 15 24 / 98%));
+  pointer-events: auto;
+}
+
+.nisar-loading-indicator {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgb(230 199 126 / 24%);
+  border-top-color: #e6c77e;
+  border-radius: 50%;
+  animation: nisar-loading-spin 800ms linear infinite;
+}
+
+.nisar-loading-label {
+  position: absolute;
+  margin-top: 48px;
+  color: #b6c8d7;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+@keyframes nisar-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nisar-context-heading {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgb(208 226 240 / 12%);
+}
+
+.nisar-context-heading p {
+  margin: 0 0 3px;
+  color: #a7bdce;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nisar-context-heading h2 {
+  margin: 0;
+  color: #f7fafc;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.nisar-part-description {
+  margin: 12px 0 0;
+  color: #d3dfeb;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.nisar-context-card {
+  position: absolute;
+  z-index: 2;
+  bottom: 16px;
+  left: 16px;
+  display: none;
+  width: min(300px, calc(100% - 32px));
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 14px 16px;
+  border: 1px solid rgb(170 200 223 / 38%);
+  border-radius: 4px;
+  background: rgb(7 15 24 / 94%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 32%);
+  color: #e2eaf0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: nisar-card-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.nisar-context-orbit-note {
+  display: grid;
+  gap: 5px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(208 226 240 / 12%);
+  font-size: 10px;
+}
+
+@keyframes nisar-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .nisar-experience {
+    inset: 4vh 16px 2vh max(30vw, 320px);
+  }
+
+  .nisar-model-stage {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    align-self: center;
+  }
+
+}
+
+@media (max-width: 760px) {
+  .nisar-experience {
+    inset: auto 12px clamp(112px, 18vh, 158px) 30vw;
+    height: min(42vh, 350px);
+  }
+
+  .nisar-model-stage {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .nisar-context-card {
+    bottom: 8px;
+    left: 8px;
+    width: min(260px, calc(100% - 16px));
+    padding: 9px 10px;
+  }
+
+  .nisar-context-heading h2 {
+    font-size: 15px;
+  }
+
+  .nisar-context-heading p {
+    font-size: 9px;
+  }
+
+  .nisar-part-description {
+    margin-top: 7px;
+    font-size: 10px;
+  }
+
+  .nisar-context-orbit-note {
+    gap: 3px;
+    padding-top: 7px;
+    margin-top: 8px;
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nisar-experience--entering {
+    animation-duration: 1ms;
+  }
+
+  .nisar-context-card,
+  .nisar-loading-indicator {
+    animation-duration: 1ms;
+  }
+}
