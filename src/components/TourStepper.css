@@ -1,0 +1,1355 @@
+.tour-stepper-container {
+  position: fixed;
+  top: clamp(20px, 2.8vh, 30px);
+  left: clamp(24px, 2.5vw, 36px);
+  width: min(390px, calc(100vw - 36px));
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none;
+  transition:
+    top 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tour-stepper-container.is-expanded {
+  top: 50%;
+  left: 50%;
+  width: min(680px, calc(100vw - 48px));
+  transform: translate(-50%, -50%);
+}
+
+.tour-stepper-container.is-module-open {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tour-stepper-container.is-3d-step:not(.is-expanded) {
+  width: min(354px, calc(100vw - 36px));
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .tour-stepper-container:not(.is-expanded) {
+    width: min(300px, calc(40vw - 20px));
+  }
+}
+
+.tour-stepper-container *,
+.tour-stepper-container button,
+.tour-stepper-container input {
+  pointer-events: auto;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Camera Hint Banner */
+.camera-hint-banner {
+  background: rgb(255 255 255 / 96%);
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 3px 12px rgb(0 0 0 / 8%);
+  animation: slideUpHint 0.4s ease-out;
+}
+
+@keyframes slideUpHint {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.camera-hint-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rotate-arrow-svg {
+  display: none;
+}
+
+@keyframes rotateSvg {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.camera-hint-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.76rem;
+  color: #6b7280;
+}
+
+.camera-hint-text strong {
+  color: #111827;
+  font-size: 0.82rem;
+}
+
+.camera-toggle-btn {
+  appearance: none;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.camera-toggle-btn:hover {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.camera-toggle-btn.active {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* Main Wizard Card */
+.tour-wizard-card {
+  max-height: min(74vh, 620px);
+  overflow-y: auto;
+  background: rgb(255 255 255 / 96%);
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px 14px;
+  color: #111827;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition:
+    padding 500ms ease,
+    max-height 500ms ease,
+    border-radius 500ms ease,
+    box-shadow 500ms ease;
+}
+
+.tour-wizard-card.nisar-intro-entering {
+  animation: nisar-intro-card-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nisar-intro-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.is-expanded .tour-wizard-card {
+  max-height: min(78vh, 720px);
+  padding: clamp(24px, 5vw, 48px);
+  gap: 18px;
+  border-radius: 4px;
+  box-shadow: 0 12px 36px rgb(0 0 0 / 16%);
+}
+
+.is-expanded .tour-card-header {
+  gap: 8px;
+}
+
+.is-expanded .tour-badge-pill {
+  font-size: 0.68rem;
+}
+
+.is-expanded .tour-card-title {
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.is-expanded .tour-card-narrative {
+  max-width: 62ch;
+  font-size: clamp(0.95rem, 1.5vw, 1.08rem);
+}
+
+/* Progress bar / step dots */
+.tour-progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.tour-progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.step-dot-btn {
+  appearance: none;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.step-dot-number {
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.step-dot-btn.is-completed {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.step-dot-btn.is-completed .step-dot-number {
+  color: #374151;
+}
+
+.step-dot-btn.is-active {
+  border-color: #111827;
+  background: #111827;
+  box-shadow: none;
+}
+
+.step-dot-btn.is-active .step-dot-number {
+  color: #fff;
+}
+
+.step-dot-btn:hover {
+  border-color: #111827;
+  background: #111827;
+}
+
+.step-dot-btn:hover .step-dot-number {
+  color: #fff;
+}
+
+/* Card Header */
+.tour-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tour-badge-pill {
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.015em;
+  color: #6b7280;
+  text-transform: none;
+}
+
+.tour-card-title {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.tour-card-narrative {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 450;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+  color: #4b5563;
+}
+
+/* Step Specific Controls */
+.tour-subcontrols {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radar-slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tour-radar-select {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.insar-guide-layer-label span {
+  color: #6b7280;
+  font-weight: 450;
+}
+
+.insar-layer-select-wrap {
+  position: relative;
+}
+
+.tour-radar-select.insar-layer-select {
+  min-height: 42px;
+  padding-right: 36px;
+  border-color: #9ca3af;
+  border-radius: 7px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 8%);
+  font-weight: 650;
+  appearance: none;
+}
+
+.tour-radar-select.insar-layer-select:hover {
+  border-color: #64748b;
+  background-color: #f8fafc;
+}
+
+.tour-radar-select.insar-layer-select:focus-visible {
+  outline: 3px solid rgb(14 139 181 / 24%);
+  outline-offset: 2px;
+  border-color: #0e8bb5;
+}
+
+.insar-layer-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 4px;
+  background: #eaf5f8;
+  color: #087da3;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-55%);
+}
+
+.radar-layer-note {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.radar-modules-intro {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.radar-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.radar-module-card {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 14px;
+  align-items: start;
+  gap: 7px;
+  min-height: 82px;
+  padding: 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  background: #fff;
+  color: #111827;
+  text-align: left;
+  cursor: pointer;
+  animation: radar-module-cue 3.2s ease-in-out infinite;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.radar-module-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.radar-module-card:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.radar-module-card:nth-child(4) {
+  animation-delay: 1.2s;
+}
+
+@keyframes radar-module-cue {
+  0%, 75%, 100% {
+    box-shadow: 0 0 0 0 rgb(37 99 235 / 0%);
+  }
+
+  85% {
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+  }
+}
+
+.radar-module-card:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+  box-shadow: 0 5px 14px rgb(17 24 39 / 12%);
+  transform: translateY(-2px);
+  animation-play-state: paused;
+}
+
+.radar-module-card:focus-visible {
+  outline: 3px solid rgb(37 99 235 / 55%);
+  outline-offset: 2px;
+}
+
+.radar-module-card.is-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: inset 3px 0 0 #2563eb;
+  animation-name: radar-module-active-cue;
+}
+
+@keyframes radar-module-active-cue {
+  0%, 75%, 100% {
+    box-shadow: inset 3px 0 0 #2563eb, 0 0 0 0 rgb(37 99 235 / 0%);
+  }
+
+  85% {
+    box-shadow: inset 3px 0 0 #2563eb, 0 0 0 3px rgb(37 99 235 / 12%);
+  }
+}
+
+.radar-module-card.is-active .radar-module-number,
+.radar-module-card.is-active .radar-module-card-copy strong,
+.radar-module-card.is-active .radar-module-arrow {
+  color: #1d4ed8;
+}
+
+.radar-module-number {
+  color: #9ca3af;
+  font-size: 0.67rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.radar-module-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.radar-module-card-copy strong {
+  color: #1f2937;
+  font-size: 0.76rem;
+  line-height: 1.2;
+}
+
+.radar-module-card-copy > span {
+  color: #6b7280;
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+
+.radar-module-card-copy > .radar-module-action {
+  color: #2563eb;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.radar-module-arrow {
+  color: #2563eb;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  transition: transform 160ms ease;
+}
+
+.radar-module-card:hover .radar-module-arrow {
+  transform: translate(2px, -2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-module-card,
+  .radar-module-card.is-active {
+    animation: none;
+  }
+
+  .radar-module-card,
+  .radar-module-arrow {
+    transition: none;
+  }
+}
+
+.gcov-compare-toggle {
+  align-self: flex-start;
+  padding: 6px 9px;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gcov-compare-toggle.is-active {
+  border-color: #1d4ed8;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.gcov-comparison-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 7px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.gcov-comparison-controls label {
+  color: #4b5563;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.gcov-comparison-dates {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #374151;
+  font-size: 0.72rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.gcov-comparison-dates span:last-child {
+  text-align: right;
+}
+
+.gcov-swipe-slider {
+  width: 100%;
+  margin: 0;
+  accent-color: #2563eb;
+  cursor: ew-resize;
+}
+
+.radar-slider-stops {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: -7px;
+  color: #6b7280;
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+
+.radar-slider-stops span:nth-child(2) {
+  text-align: center;
+}
+
+.radar-slider-stops span:last-child {
+  text-align: right;
+}
+
+.insar-guide-trigger {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #4b5563;
+  font: inherit;
+  font-size: 0.76rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.insar-guide-trigger:hover {
+  color: #111827;
+}
+
+.radar-legend-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #053061 0%,
+    #2166ac 25%,
+    #f7f7f7 50%,
+    #d6604d 75%,
+    #67001f 100%
+  );
+}
+
+.radar-legend-bar--fringes {
+  background: linear-gradient(90deg, #6e2b73, #e6a3a1, #efd9b7, #8b5a83, #6e2b73);
+}
+
+.radar-legend-bar--coherence {
+  background: linear-gradient(90deg, #00224e, #35456c, #7d7c78, #c8b866, #fee838);
+}
+
+.radar-legend-bar--phase_gradient_t162a,
+.radar-legend-bar--phase_gradient_t54d {
+  background: linear-gradient(90deg, #353535, #f4f4f4);
+}
+
+.radar-legend-bar--gcov_hh_before,
+.radar-legend-bar--gcov_hh_after,
+.radar-legend-bar--gcov_hv_before,
+.radar-legend-bar--gcov_hv_after {
+  background: linear-gradient(90deg, #111827, #9ca3af, #fff);
+}
+
+.radar-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #6b7280;
+  font-family: inherit;
+}
+
+.radar-fault-legend {
+  display: grid;
+  gap: 5px;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.subcontrol-label {
+  font-size: 0.76rem;
+  text-transform: none;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.epicenter-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.epicenter-select-btn {
+  appearance: none;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.epicenter-select-btn:hover {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.epicenter-select-btn.active {
+  background: #1f2937;
+  border-color: #1f2937;
+  color: #fff;
+  font-weight: 600;
+}
+
+.ep-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff4d59;
+}
+
+.finite-fault-controls {
+  gap: 7px;
+}
+
+.finite-fault-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 1px 2px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #64748b;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.finite-fault-summary strong {
+  color: #1f2937;
+  font-variant-numeric: tabular-nums;
+}
+
+.finite-fault-view-3d-btn {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #1d4ed8;
+  border-radius: 4px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.finite-fault-view-3d-btn:hover {
+  border-color: #1e40af;
+  background: #1d4ed8;
+}
+
+.finite-fault-legend {
+  padding: 7px 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+
+.finite-fault-legend-scale {
+  height: 7px;
+  margin: 6px 0 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f8fafc, #fbbf24 48%, #e11d48);
+}
+
+.finite-fault-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.61rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.finite-fault-legend small {
+  display: block;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 0.61rem;
+}
+
+.finite-fault-layer-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background: #fff;
+  color: #374151;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.finite-fault-layer-btn:hover,
+.finite-fault-layer-btn.is-active {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.finite-fault-swatch {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  border: 1px solid rgb(15 23 42 / 14%);
+  border-radius: 4px;
+}
+
+.finite-fault-swatch--slip {
+  background: linear-gradient(135deg, #f8fafc 8%, #fbbf24 45%, #e11d48 82%);
+}
+
+.finite-fault-swatch--deformation {
+  background: linear-gradient(90deg, #2563eb, #f8fafc 50%, #e11d48);
+}
+
+.finite-fault-layer-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.finite-fault-layer-copy strong {
+  color: #1f2937;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.finite-fault-layer-copy small {
+  color: #6b7280;
+  font-size: 0.64rem;
+  line-height: 1.3;
+}
+
+.finite-fault-layer-state {
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.finite-fault-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.tour-card-instruction {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #4b5563;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 5px 8px;
+  border-radius: 2px;
+}
+
+/* Navigation Footer */
+.tour-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+.is-expanded .tour-card-footer {
+  justify-content: flex-end;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.tour-nav-btn {
+  appearance: none;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  min-height: 36px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.tour-nav-btn:hover:not(:disabled) {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.tour-nav-btn:disabled {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.tour-nav-btn.restart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.tour-nav-btn.next {
+  margin-left: auto;
+  background: #111827;
+  border-color: #111827;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.tour-nav-btn--confirm {
+  min-width: 100px;
+  padding: 10px 24px;
+  font-size: 0.88rem;
+}
+
+.tour-nav-btn.next:hover {
+  background: #1f2937;
+  border-color: #1f2937;
+  color: #fff;
+  box-shadow: none;
+}
+
+.tour-stepper-container button:focus-visible,
+.tour-stepper-container input:focus-visible,
+.insar-guide-dialog button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.insar-guide-backdrop {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  pointer-events: none;
+  animation: insar-guide-fade-in 220ms ease-out both;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.insar-guide-dialog {
+  width: min(1120px, calc(100vw - 40px));
+  max-width: min(1120px, calc(100vw - 40px));
+  min-width: 0;
+  height: min(86dvh, 840px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 30px);
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 97%);
+  color: #111827;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 24%);
+  pointer-events: auto;
+  animation: insar-guide-rise-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.insar-guide-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+}
+
+.insar-guide-header h2 {
+  margin: 8px 0 6px;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.insar-guide-header p {
+  max-width: 78ch;
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.insar-guide-close {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.insar-guide-close:hover {
+  background: #f3f4f6;
+}
+
+.insar-guide-sections {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 8px 10px 8px 4px;
+}
+
+.insar-guide-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.insar-guide-layout {
+  display: grid;
+  grid-template-columns: minmax(270px, 0.84fr) minmax(0, 1.16fr);
+  flex: 1 1 auto;
+  gap: clamp(18px, 3vw, 34px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.insar-guide-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.insar-guide-layer-label,
+.insar-module-controls > label {
+  color: #374151;
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.insar-module-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.insar-module-controls .gcov-compare-toggle {
+  align-self: stretch;
+}
+
+.insar-guide-section {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.82fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: clamp(14px, 2.5vw, 26px);
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.insar-guide-section--details {
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  padding: 20px 24px;
+  border: 0;
+  background: transparent;
+}
+
+.insar-guide-figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.insar-guide-figure img {
+  display: block;
+  width: 100%;
+  height: clamp(190px, 31vh, 300px);
+  border-radius: 6px;
+  background: #f3f4f6;
+  object-fit: contain;
+}
+
+.insar-guide-figure figcaption {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.insar-guide-copy h3 {
+  margin: 0 0 7px;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.insar-guide-copy p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.insar-guide-copy p + p {
+  margin-top: 7px;
+}
+
+@keyframes insar-guide-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes insar-guide-rise-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.insar-comparison-dock {
+  position: fixed;
+  z-index: 2100;
+  right: 50%;
+  bottom: 20px;
+  width: min(620px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 12px 16px;
+  transform: translateX(50%);
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: #fff;
+  color: #111827;
+  box-shadow: 0 8px 28px rgb(15 23 42 / 20%);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  animation: insar-slider-dock-in 160ms ease-out both;
+}
+
+.insar-comparison-dock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.insar-comparison-dock-close {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.insar-comparison-dock-close:hover {
+  background: #f3f4f6;
+}
+
+.insar-comparison-dock-controls {
+  display: grid;
+  grid-template-columns: auto 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 0.78rem;
+}
+
+.insar-comparison-dock-controls .tour-radar-select {
+  width: 100%;
+}
+
+.insar-comparison-dock .gcov-comparison-dates {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.insar-comparison-dock-geometry-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #4b5563;
+  font-size: 0.78rem;
+}
+
+.insar-comparison-dock .gcov-swipe-slider {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+}
+
+@keyframes insar-slider-dock-in {
+  from { opacity: 0; transform: translate(50%, 8px); }
+  to { opacity: 1; transform: translate(50%, 0); }
+}
+
+@media (max-width: 640px) {
+  .insar-comparison-dock {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    padding: 10px 12px;
+    transform: none;
+    animation-name: insar-slider-dock-in-mobile;
+  }
+
+  .insar-comparison-dock-controls {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .insar-comparison-dock .gcov-comparison-dates {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@keyframes insar-slider-dock-in-mobile {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .tour-stepper-container {
+    top: 12px;
+    left: 12px;
+    width: min(390px, calc(100vw - 24px));
+  }
+  .tour-stepper-container.is-expanded {
+    top: 50%;
+    left: 50%;
+    width: calc(100vw - 32px);
+  }
+  .tour-wizard-card {
+    padding: 10px 12px;
+    max-height: 56vh;
+  }
+  .tour-card-title {
+    font-size: 1rem;
+  }
+  .tour-card-narrative {
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  .is-expanded .tour-card-title {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+  .is-expanded .tour-card-narrative {
+    font-size: 0.95rem;
+  }
+  .tour-subcontrols {
+    padding: 7px 9px;
+  }
+  .insar-guide-backdrop {
+    padding: 12px;
+  }
+  .insar-guide-dialog {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    height: min(70dvh, 600px);
+    padding: 14px;
+  }
+  .insar-guide-header {
+    gap: 10px;
+  }
+  .insar-guide-header p {
+    font-size: 0.82rem;
+  }
+  .radar-module-grid {
+    grid-template-columns: 1fr;
+  }
+  .insar-guide-tools {
+    overflow: auto;
+  }
+  .insar-guide-figure img {
+    height: clamp(120px, 20vh, 180px);
+  }
+  .insar-guide-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(150px, 1fr);
+    overflow: auto;
+  }
+  .insar-guide-section--details {
+    padding: 14px 4px;
+  }
+  .insar-guide-sections {
+    min-height: 140px;
+    overflow: auto;
+    padding: 0 4px;
+  }
+  .insar-guide-copy p {
+    font-size: 0.98rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-wizard-card.nisar-intro-entering {
+    animation-duration: 1ms;
+  }
+
+  .tour-stepper-container *,
+  .tour-stepper-container *::before,
+  .tour-stepper-container *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .insar-guide-backdrop,
+  .insar-guide-dialog,
+  .insar-comparison-dock {
+    animation-duration: 0.01ms !important;
+  }
+}

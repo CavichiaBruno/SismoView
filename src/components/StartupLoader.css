@@ -1,0 +1,370 @@
+.startup-loader {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  overflow: hidden;
+  background: #fcfcfc;
+  opacity: 1;
+  transition: opacity 900ms ease, visibility 0s linear 900ms;
+}
+
+.startup-loader__start-screen {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #030405;
+}
+
+.startup-loader__blackhole {
+  position: absolute !important;
+  z-index: 0;
+  inset: 0;
+}
+
+.startup-loader__start-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(90vw, 42rem);
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 1rem;
+  background: rgb(3 5 8 / 66%);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 16px 70px rgb(0 0 0 / 45%);
+  backdrop-filter: blur(8px);
+}
+
+.startup-loader__welcome-title {
+  margin: 0;
+  font: 700 clamp(1.6rem, 4vw, 2.5rem)/1.15 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.startup-loader__welcome-subtitle,
+.startup-loader__welcome-description {
+  margin: 0;
+  color: rgb(255 255 255 / 84%);
+  font: 400 clamp(0.9rem, 2vw, 1.05rem)/1.5 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.startup-loader__welcome-subtitle {
+  font-weight: 600;
+}
+
+.startup-loader__sound-prompt {
+  margin: 0.5rem 0 0;
+  font: 500 clamp(1rem, 2.4vw, 1.3rem)/1.5 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.startup-loader__start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.startup-loader__start-button {
+  padding: 0.8rem 2rem;
+  border: 1px solid rgb(255 255 255 / 78%);
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font: 500 1rem/1.2 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.startup-loader__start-button:hover {
+  background: #d7e8ef;
+}
+
+.startup-loader__start-button--quiet {
+  order: 1;
+  background: transparent;
+  color: #fff;
+}
+
+.startup-loader__start-actions > .startup-loader__start-button:not(.startup-loader__start-button--quiet) {
+  order: 2;
+}
+
+.startup-loader__start-button--quiet:hover {
+  background: rgb(255 255 255 / 16%);
+  color: #fff;
+}
+
+.startup-loader__start-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+@media (max-width: 520px) {
+  .startup-loader__start-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .startup-loader__start-button {
+    width: min(100%, 18rem);
+  }
+}
+
+.startup-loader--leaving {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 900ms ease,
+    visibility 0s linear 900ms;
+}
+
+.map-provisioning-loader {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: #040609;
+  color: #fff;
+  font: 500 0.8rem/1.5 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.06em;
+  opacity: 1;
+  transition: opacity 700ms ease, visibility 0s linear 700ms;
+}
+
+.map-provisioning-loader--leaving {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.map-provisioning-loader__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgb(255 255 255 / 28%);
+  border-top-color: #9acbd3;
+  border-radius: 50%;
+  animation: map-provisioning-spin 700ms linear infinite;
+}
+
+.voice-intro-waveform-overlay {
+  position: fixed;
+  z-index: 10001;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.voice-intro-waveform-overlay.is-closing {
+  animation: voice-signal-shutdown 720ms cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
+}
+
+.voice-intro-waveform-overlay.is-opening {
+  animation: voice-signal-startup 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.voice-intro-shutdown-flare {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: min(36rem, calc(100vw - 2rem));
+  height: 3px;
+  background: #d9faff;
+  box-shadow: 0 0 12px 4px rgb(161 244 255 / 90%), 0 0 38px 12px rgb(66 190 255 / 65%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scaleX(0);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.voice-intro-waveform-overlay.is-closing .voice-intro-shutdown-flare {
+  animation: voice-signal-flare 720ms ease-out both;
+}
+
+.voice-intro-waveform {
+  width: min(36rem, calc(100vw - 2rem));
+  border-color: rgb(74 222 128 / 35%);
+  background: rgb(4 10 14 / 94%);
+  color: #f3f4f6;
+  box-shadow: 0 24px 90px rgb(0 0 0 / 72%), 0 0 70px rgb(74 222 128 / 15%);
+}
+
+.voice-intro-waveform[data-size="large"] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.voice-intro-waveform[data-size="large"] .waveform__header {
+  margin-bottom: 0.25rem;
+}
+
+.voice-intro-waveform[data-size="large"] .waveform__header span:first-child {
+  font-size: clamp(0.8rem, 1.1vw, 1rem);
+}
+
+.voice-intro-waveform[data-size="large"] [data-waveform-status] {
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+}
+
+.voice-intro-waveform[data-size="large"] .waveform__bars {
+  height: clamp(7rem, 20vh, 12rem);
+  gap: clamp(2px, 0.35vw, 5px);
+}
+
+.voice-intro-waveform[data-size="large"] .waveform__bar {
+  width: clamp(0.35rem, 0.75vw, 0.65rem);
+}
+
+.voice-intro-subtitle {
+  width: min(36rem, calc(100vw - 2rem));
+  margin: 0;
+  color: #fff;
+  font: 500 clamp(1.05rem, 2.2vw, 1.65rem)/1.4 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.025em;
+  text-align: center;
+  text-shadow: 0 2px 18px rgb(0 0 0 / 75%);
+  animation: voice-subtitle-enter 220ms ease-out both;
+}
+
+@media (max-width: 640px) {
+  .voice-intro-waveform {
+    width: calc(100vw - 1.5rem);
+  }
+
+  .voice-intro-waveform[data-size="large"] .waveform__bars {
+    height: clamp(6rem, 16vh, 9rem);
+  }
+
+}
+
+@keyframes voice-subtitle-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes voice-signal-shutdown {
+  0% {
+    opacity: 1;
+    transform: scale(1, 1);
+    filter: brightness(1);
+  }
+
+  64% {
+    opacity: 1;
+    transform: scale(1, 0.012);
+    filter: brightness(1.7);
+  }
+
+  82% {
+    opacity: 1;
+    transform: scale(0.22, 0.012);
+    filter: brightness(2.4);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0, 0);
+    filter: brightness(3);
+  }
+}
+
+@keyframes voice-signal-startup {
+  0% {
+    opacity: 0;
+    transform: scale(0, 0);
+    filter: brightness(3);
+  }
+
+  18% {
+    opacity: 1;
+    transform: scale(0.22, 0.012);
+    filter: brightness(2.4);
+  }
+
+  36% {
+    opacity: 1;
+    transform: scale(1, 0.012);
+    filter: brightness(1.7);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes voice-signal-flare {
+  0%,
+  60% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1);
+  }
+
+  84% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scaleX(0.18);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-intro-waveform-overlay.is-closing,
+  .voice-intro-waveform-overlay.is-opening,
+  .voice-intro-waveform-overlay.is-closing .voice-intro-shutdown-flare {
+    animation-duration: 1ms;
+  }
+}
+
+@keyframes map-provisioning-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-loader {
+    transition-duration: 1ms;
+  }
+
+  .map-provisioning-loader__spinner {
+    animation-duration: 1.8s;
+  }
+}
