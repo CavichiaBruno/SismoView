@@ -1,0 +1,316 @@
+#root,
+.cesium-map,
+.cesium-map .cesium-widget,
+.cesium-map .cesium-widget canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-shell {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease;
+}
+
+.app-shell--ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cesium-map .cesium-widget-credits {
+  display: none !important;
+}
+
+.map-info-panel {
+  position: fixed;
+  z-index: 1;
+  bottom: 20px;
+  left: 20px;
+  width: min(320px, calc(100vw - 40px));
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 14px;
+  background: rgb(16 26 32 / 92%);
+  color: #fff;
+  font-family: Inter, sans-serif;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(8px);
+}
+
+.coherence-pointer-readout {
+  position: fixed;
+  z-index: 85;
+  display: grid;
+  gap: 3px;
+  box-sizing: border-box;
+  width: min(220px, calc(100vw - 16px));
+  padding: 9px 12px;
+  border: 1px solid rgb(128 216 255 / 45%);
+  border-radius: 10px;
+  background: rgb(7 17 24 / 92%);
+  color: #e7f7ff;
+  font: 12px/1.35 Inter, sans-serif;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 38%);
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.coherence-pointer-readout strong {
+  color: #8fe6ff;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.map-info-panel h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.displacement-colorbar {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #053061 0%,
+    #2166ac 12.5%,
+    #4393c3 25%,
+    #92c5de 37.5%,
+    #f7f7f7 50%,
+    #f4a582 62.5%,
+    #d6604d 75%,
+    #b2182b 87.5%,
+    #67001f 100%
+  );
+}
+
+.displacement-colorbar-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.displacement-note {
+  margin: 9px 0 14px;
+  color: rgb(255 255 255 / 76%);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.layer-mixer {
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+}
+
+.layer-mixer-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.layer-mixer input {
+  display: block;
+  width: 100%;
+  margin: 0;
+  accent-color: #56b8ff;
+  cursor: pointer;
+}
+
+.fringe-cycle {
+  display: block;
+  margin-top: 6px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 10px;
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .map-info-panel {
+    bottom: 12px;
+    left: 12px;
+    width: min(320px, calc(100vw - 24px));
+    padding: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-shell {
+      transition-duration: 1ms;
+    }
+  }
+
+}
+
+/* ============================================================
+   Epicenter Water Ripple Effect ("Piedra tirada al agua")
+   ============================================================ */
+.epicenter-overlay-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.epicenter-ripple-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  margin-left: -22px;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
+  transform-origin: center center;
+  transition: opacity 0.3s ease;
+}
+
+/* Concentric water ripple waves spreading outward */
+.epicenter-ripple-marker .ripple-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  margin-left: -14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 65, 80, 0.95);
+  background: radial-gradient(circle, rgba(255, 65, 80, 0.25) 0%, rgba(255, 65, 80, 0) 70%);
+  box-shadow: 0 0 10px rgba(255, 65, 80, 0.5);
+  animation: waterRippleExpand 2.7s cubic-bezier(0.12, 0.55, 0.35, 1) infinite;
+  pointer-events: none;
+}
+
+.epicenter-ripple-marker .ripple-wave.wave-1 {
+  animation-delay: 0s;
+}
+
+.epicenter-ripple-marker .ripple-wave.wave-2 {
+  animation-delay: 0.9s;
+}
+
+.epicenter-ripple-marker .ripple-wave.wave-3 {
+  animation-delay: 1.8s;
+}
+
+@keyframes waterRippleExpand {
+  0% {
+    transform: scale(0.2);
+    opacity: 1;
+    border-width: 2.4px;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* Central droplet impact core */
+.epicenter-ripple-marker .ripple-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: #ff2b3a;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px #ff3b47, 0 0 18px rgba(255, 59, 71, 0.7);
+  z-index: 2;
+  animation: corePulse 1.8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes corePulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 6px #ff3b47, 0 0 14px rgba(255, 59, 71, 0.5);
+  }
+  100% {
+    transform: scale(1.15);
+    box-shadow: 0 0 12px #ff3b47, 0 0 24px rgba(255, 59, 71, 0.9);
+  }
+}
+
+/* Active Epicenter Highlight */
+.epicenter-ripple-marker.active-epicenter .ripple-core {
+  background: #ffea00;
+  box-shadow: 0 0 12px #ffea00, 0 0 26px rgba(255, 234, 0, 0.95);
+}
+
+.epicenter-ripple-marker.active-epicenter .ripple-wave {
+  border-color: rgba(255, 234, 0, 0.95);
+  background: radial-gradient(circle, rgba(255, 234, 0, 0.28) 0%, rgba(255, 234, 0, 0) 70%);
+  box-shadow: 0 0 12px rgba(255, 234, 0, 0.6);
+}
+
+/* Elegant glass tag with place and magnitude */
+.epicenter-ripple-marker .ripple-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(8, 14, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 3;
+}
+
+.epicenter-ripple-marker .ripple-label .ripple-place {
+  font-family: Inter, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #eaf1f7;
+  letter-spacing: -0.01em;
+}
+
+.epicenter-ripple-marker .ripple-label .ripple-mag {
+  font-family: Inter, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ff5e6a;
+  letter-spacing: 0.02em;
+}
+
+/* Space perspective adaptation: compact ripple and hide long colliding labels */
+.epicenter-ripple-marker.space-view .ripple-wave {
+  animation-duration: 2.2s;
+  box-shadow: none;
+}
+
+.epicenter-ripple-marker.space-view .ripple-label {
+  display: none !important;
+}
