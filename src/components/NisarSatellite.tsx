@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import i18n, { translate } from '../i18n'
 import './NisarSatellite.css'
 
 const ASSET_BASE = import.meta.env.BASE_URL
@@ -21,19 +22,19 @@ export function NisarSatellite() {
   return (
     <section
       className={`nisar-experience${isEntranceReady ? ' nisar-experience--entering' : ''}`}
-      aria-label="Explora el satélite NISAR"
+      aria-label={translate('Explora el satélite NISAR')}
     >
       <div className="nisar-model-stage">
         <iframe
           className="nisar-context-model"
-          title="Observatorio NISAR"
-          src={`${ASSET_BASE}observatorio-nisar.html`}
+          title={translate('Observatorio NISAR')}
+          src={`${ASSET_BASE}observatorio-nisar.html?lang=${i18n.language.startsWith('en') ? 'en' : 'es'}`}
           onLoad={() => setIsModelLoaded(true)}
         />
         {isLoading && (
-          <div className="nisar-skeleton-loader" role="status" aria-label="Cargando modelo 3D de NISAR">
+          <div className="nisar-skeleton-loader" role="status" aria-label={translate('Cargando modelo 3D de NISAR')}>
             <span className="nisar-loading-indicator" aria-hidden="true" />
-            <span className="nisar-loading-label">Cargando NISAR</span>
+            <span className="nisar-loading-label">{translate('Cargando NISAR')}</span>
           </div>
         )}
       </div>

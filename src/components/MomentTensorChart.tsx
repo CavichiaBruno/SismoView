@@ -1,5 +1,6 @@
 import { RotateCcw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import i18n, { translate } from '../i18n'
 
 const SIZE = 500
 const CENTER = SIZE / 2
@@ -107,7 +108,7 @@ function MomentBeachball() {
   return (
     <div className="dash-tensor-beachball">
       <canvas ref={canvasRef} width={SIZE} height={SIZE} aria-hidden="true" />
-      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label="Mecanismo focal: falla transcurrente casi vertical">
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={translate('Mecanismo focal: falla transcurrente casi vertical')}>
         <circle cx={CENTER} cy={CENTER} r={RADIUS} className="dash-tensor-outline" />
         {PLANE_PATHS.map((path, index) => (
           <path key={index} d={path} pathLength="1" className="dash-tensor-plane" />
@@ -128,40 +129,38 @@ export function MomentTensorChart() {
     <section className="dash-panel dash-tensor-card" aria-labelledby="moment-tensor-title">
       <div className="dash-tensor-heading">
         <div>
-          <span className="dash-section-title">USGS · Tensor de momento</span>
-          <h2 id="moment-tensor-title">Mecanismo focal</h2>
-          <p>24 jun 2026 · us6000t7zp · hemisferio inferior</p>
+          <span className="dash-section-title">{translate('USGS · Tensor de momento')}</span>
+          <h2 id="moment-tensor-title">{translate('Mecanismo focal')}</h2>
+          <p>{translate('24 jun 2026 · us6000t7zp · hemisferio inferior')}</p>
         </div>
         <button
           className="dash-chart-replay"
           type="button"
           onClick={() => setPlayback((current) => current + 1)}
-          aria-label="Repetir animación del mecanismo focal"
+          aria-label={translate('Repetir animación del mecanismo focal')}
         >
           <RotateCcw width={14} height={14} />
-          <span>Repetir</span>
+          <span>{translate('Repetir')}</span>
         </button>
       </div>
 
       <MomentBeachball key={playback} />
 
-      <div className="dash-tensor-metrics" aria-label="Parámetros del tensor de momento">
-        <div><span>Magnitud</span><strong>Mww 7,5 ± 0,036</strong></div>
-        <div><span>Profundidad</span><strong>23,5 km</strong></div>
-        <div><span>Movimiento</span><strong>Transcurrente</strong></div>
+      <div className="dash-tensor-metrics" aria-label={translate('Parámetros del tensor de momento')}>
+        <div><span>{translate('Magnitud')}</span><strong>{i18n.language.startsWith('en') ? 'Mww 7.5 ± 0.036' : 'Mww 7,5 ± 0,036'}</strong></div>
+        <div><span>{translate('Profundidad')}</span><strong>{i18n.language.startsWith('en') ? '23.5 km' : '23,5 km'}</strong></div>
+        <div><span>{translate('Movimiento')}</span><strong>{translate('Transcurrente')}</strong></div>
       </div>
 
       <div className="dash-tensor-legend">
-        <span><i className="dash-tensor-compression" /> Compresión</span>
-        <span><i className="dash-tensor-dilatation" /> Dilatación</span>
+        <span><i className="dash-tensor-compression" /> {translate('Compresión')}</span>
+        <span><i className="dash-tensor-dilatation" /> {translate('Dilatación')}</span>
       </div>
 
       <div className="dash-tensor-explanation">
-        <h3>¿Qué nos dice este gráfico?</h3>
+        <h3>{translate('¿Qué nos dice este gráfico?')}</h3>
         <p>
-          El patrón es compatible con una falla que se desplazó principalmente de lado.
-          Las zonas azules indican compresión y las oscuras, dilatación. Las líneas blancas
-          muestran dos posibles planos de ruptura; el tensor no permite saber por sí solo cuál se activó.
+          {translate('El patrón es compatible con una falla que se desplazó principalmente de lado. Las zonas azules indican compresión y las oscuras, dilatación. Las líneas blancas muestran dos posibles planos de ruptura; el tensor no permite saber por sí solo cuál se activó.')}
         </p>
       </div>
     </section>

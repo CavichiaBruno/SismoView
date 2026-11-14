@@ -70,6 +70,7 @@ import { TourTypingScreen } from './TourTypingScreen'
 import { TourStepper } from './TourStepper'
 import { EarthquakeDashboard } from './EarthquakeDashboard'
 import { Waveform } from './ui/waveform'
+import i18n, { translate } from '../i18n'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
 type CesiumMapProps = {
@@ -120,10 +121,10 @@ const PROVISIONING_TIMEOUT = 15_000
 const MAXIMUM_CAMERA_TILT = CesiumMath.toRadians(89)
 const CAMERA_ORBIT_DISTANCE = 85_000
 const PROVISIONING_MESSAGES = [
-  'Preparando visualización',
-  'Cargando texturas 3D',
-  'Calibrando mediciones',
-  'Sincronizando capas satelitales',
+  translate('Preparando visualización'),
+  translate('Cargando texturas 3D'),
+  translate('Calibrando mediciones'),
+  translate('Sincronizando capas satelitales'),
 ] as const
 const EPICENTER_FLIGHT_DURATION = 4.2
 const CAMERA_FLIGHT_EASING = EasingFunction.CUBIC_IN_OUT
@@ -162,17 +163,17 @@ function finiteFaultDescription(properties: {
   trup: number
   rake: number
 }) {
-  const numberFormat = new Intl.NumberFormat('es-ES', {
+  const numberFormat = new Intl.NumberFormat(i18n.language.startsWith('en') ? 'en-US' : 'es-ES', {
     maximumFractionDigits: 3,
   })
   const moment = properties.sf_moment.toExponential(2).replace('e+', ' × 10^')
 
   return `<table><tbody>
-    <tr><th>Deslizamiento</th><td>${numberFormat.format(properties.slip)} m</td></tr>
-    <tr><th>Momento de esta subfalla</th><td>${moment} N·m</td></tr>
-    <tr><th>Duración del movimiento (rise)</th><td>${numberFormat.format(properties.rise)} s</td></tr>
-    <tr><th>Inicio de ruptura (Trup)</th><td>${numberFormat.format(properties.trup)} s</td></tr>
-    <tr><th>Dirección del deslizamiento (rake)</th><td>${numberFormat.format(properties.rake)}°</td></tr>
+    <tr><th>${translate('Deslizamiento')}</th><td>${numberFormat.format(properties.slip)} m</td></tr>
+    <tr><th>${translate('Momento de esta subfalla')}</th><td>${moment} N·m</td></tr>
+    <tr><th>${translate('Duración del movimiento (rise)')}</th><td>${numberFormat.format(properties.rise)} s</td></tr>
+    <tr><th>${translate('Inicio de ruptura (Trup)')}</th><td>${numberFormat.format(properties.trup)} s</td></tr>
+    <tr><th>${translate('Dirección del deslizamiento (rake)')}</th><td>${numberFormat.format(properties.rake)}°</td></tr>
   </tbody></table>`
 }
 
@@ -230,12 +231,12 @@ const displacementZones = [
   {
     longitude: -68.55,
     latitude: 10.72,
-    label: 'LOS negativo · azul',
+    label: translate('LOS negativo · azul'),
   },
   {
     longitude: -67.55,
     latitude: 10.05,
-    label: 'LOS positivo · rojo',
+    label: translate('LOS positivo · rojo'),
   },
 ] as const
 
@@ -244,67 +245,67 @@ const radarLayerAnnotations = [
     layer: 'phase_gradient_t162a',
     longitude: -68.32,
     latitude: 10.575,
-    text: 'Gradiente de fase · T162A\nContraste espacial; no es desplazamiento directo',
+    text: translate('Gradiente de fase · T162A\nContraste espacial; no es desplazamiento directo'),
   },
   {
     layer: 'phase_gradient_t54d',
     longitude: -68.32,
     latitude: 10.575,
-    text: 'Gradiente de fase · T54D\nContraste espacial; no es desplazamiento directo',
+    text: translate('Gradiente de fase · T54D\nContraste espacial; no es desplazamiento directo'),
   },
   {
     layer: 'east_west',
     longitude: -68.55,
     latitude: 10.72,
-    text: 'Lado norte de la falla\nEste positivo: movimiento hacia el este',
+    text: translate('Lado norte de la falla\nEste positivo: movimiento hacia el este'),
   },
   {
     layer: 'east_west',
     longitude: -67.55,
     latitude: 10.05,
-    text: 'Lado sur de la falla\nOeste negativo: movimiento hacia el oeste',
+    text: translate('Lado sur de la falla\nOeste negativo: movimiento hacia el oeste'),
   },
   {
     layer: 'vertical',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'Componente vertical\nPositivo hacia arriba · señal débil',
+    text: translate('Componente vertical\nPositivo hacia arriba · señal débil'),
   },
   {
     layer: 'los_ascending',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'LOS ascendente\nDesplazamiento proyectado en la línea de visión',
+    text: translate('LOS ascendente\nDesplazamiento proyectado en la línea de visión'),
   },
   {
     layer: 'los_descending',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'LOS descendente\nDesplazamiento proyectado en la línea de visión',
+    text: translate('LOS descendente\nDesplazamiento proyectado en la línea de visión'),
   },
   {
     layer: 'gcov_hh_before',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'HH · 13 jun\nRetrodispersión gamma-0, no desplazamiento',
+    text: translate('HH · 13 jun\nRetrodispersión gamma-0, no desplazamiento'),
   },
   {
     layer: 'gcov_hv_before',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'HV · 13 jun\nRetrodispersión gamma-0, no desplazamiento',
+    text: translate('HV · 13 jun\nRetrodispersión gamma-0, no desplazamiento'),
   },
   {
     layer: 'gcov_hh_after',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'HH · 17 sep\nRetrodispersión gamma-0, no desplazamiento',
+    text: translate('HH · 17 sep\nRetrodispersión gamma-0, no desplazamiento'),
   },
   {
     layer: 'gcov_hv_after',
     longitude: -68.05,
     latitude: 10.575,
-    text: 'HV · 17 sep\nRetrodispersión gamma-0, no desplazamiento',
+    text: translate('HV · 17 sep\nRetrodispersión gamma-0, no desplazamiento'),
   },
 ] as const
 
@@ -1112,7 +1113,7 @@ export function CesiumMap({
       && !hasConfirmedDashboardShortcut
     ) {
       const confirmed = window.confirm(
-        '¿Seguro que quieres ir directamente al dashboard y saltarte la experiencia interactiva?',
+        translate('¿Seguro que quieres ir directamente al dashboard y saltarte la experiencia interactiva?'),
       )
       if (!confirmed) return
       setHasConfirmedDashboardShortcut(true)
@@ -1423,7 +1424,7 @@ export function CesiumMap({
       const position = Cartesian3.fromDegrees(event.longitude, event.latitude, 0)
       viewer.entities.add({
         id: event.id,
-        name: event.place,
+        name: translate(event.place),
         position,
         billboard: {
           image: createPulseMarker(),
@@ -1444,7 +1445,7 @@ export function CesiumMap({
           }, false),
         },
         label: {
-          text: `${event.place} · M${event.magnitude.toFixed(1)}`,
+          text: `${translate(event.place)} · M${event.magnitude.toFixed(1)}`,
           font: 'bold 11px Inter, sans-serif',
           fillColor: Color.WHITE,
           outlineColor: Color.fromCssColorString('#040609'),
@@ -1591,7 +1592,7 @@ export function CesiumMap({
       } catch (error) {
         if (disposed) return
         console.error('Unable to load the finite-fault visualization data.', error)
-        setFiniteFaultError('No se pudieron cargar las capas del modelo de falla finita.')
+        setFiniteFaultError(translate('No se pudieron cargar las capas del modelo de falla finita.'))
       }
     }
 
@@ -1599,7 +1600,7 @@ export function CesiumMap({
 
     const nisarOrbit = viewer.entities.add({
       id: 'nisar-orbit',
-      name: 'Órbita ilustrativa de NISAR · 747 km · 98,4°',
+      name: translate('Órbita ilustrativa de NISAR · 747 km · 98,4°'),
       show: false,
       polyline: {
         positions: createNisarOrbitPath(),
@@ -1657,7 +1658,9 @@ export function CesiumMap({
         show: false,
         position: Cartesian3.fromDegrees(zone.longitude, zone.latitude),
         label: {
-          text: `${zone.label}\nEscala saturada en ±40 cm LOS`,
+          text: translate('{{zone}}\nEscala saturada en ±40 cm LOS', {
+            zone: zone.label,
+          }),
           font: '600 13px sans-serif',
           fillColor: Color.WHITE,
           outlineColor: Color.BLACK,
@@ -1724,7 +1727,7 @@ export function CesiumMap({
       show: false,
       position: Cartesian3.fromDegrees(-68.385, 10.565),
       label: {
-        text: 'Falla de Boconó',
+        text: translate('Falla de Boconó'),
         font: '500 16px sans-serif',
         fillColor: Color.BLACK,
         showBackground: true,
@@ -1754,7 +1757,7 @@ export function CesiumMap({
       show: false,
       position: Cartesian3.fromDegrees(-67.65, 11.55),
       label: {
-        text: 'Mar Caribe\nBaja coherencia: señal poco fiable',
+        text: translate('Mar Caribe\nBaja coherencia: señal poco fiable'),
         font: '600 13px sans-serif',
         fillColor: Color.WHITE,
         outlineColor: Color.BLACK,
@@ -2264,7 +2267,7 @@ export function CesiumMap({
         <CesiumCanvas
           className="cesium-map"
           ref={containerRef}
-          aria-label="Globo 3D con epicentros"
+          aria-label={translate('Globo 3D con epicentros')}
         />
       )}
 
@@ -2286,14 +2289,14 @@ export function CesiumMap({
             top: `${Math.max(8, Math.min(coherenceProbe.y + 16, window.innerHeight - 68))}px`,
           }}
         >
-          <strong>Coherencia</strong>
+          <strong>{translate('Coherencia')}</strong>
           <span>
             {coherenceProbe.status === 'loading'
-              ? 'Leyendo píxel...'
+              ? translate('Leyendo píxel...')
               : coherenceProbe.status === 'error'
-                ? 'No se pudo leer el raster'
+                ? translate('No se pudo leer el raster')
                 : coherenceProbe.value === null
-                  ? 'Sin dato en esta ubicación'
+                  ? translate('Sin dato en esta ubicación')
                   : `${coherenceProbe.value.toFixed(3)} (decimal) = ${(coherenceProbe.value * 100).toFixed(1)}%`}
           </span>
         </div>

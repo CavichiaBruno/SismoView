@@ -805,5 +805,306 @@ function buildObservatory(THREE){
   })(performance.now());
 })();
 </script>
+<script>
+(() => {
+  const language = new URLSearchParams(window.location.search).get('lang')
+  if (language !== 'en') return
 
+  document.documentElement.lang = 'en'
+
+  const translations = {
+    'Observatorio NISAR': 'NISAR Observatory',
+    'Visor 3D del observatorio NISAR': 'NISAR observatory 3D viewer',
+    'NASA-ISRO SAR · 1 unidad = 1 m': 'NASA-ISRO SAR · 1 unit = 1 m',
+    'Información del modelo': 'Model information',
+    'Este modelo es una aproximación 3D. No existen planos CAD públicos de NISAR: las cifras documentadas vienen de NASA/JPL e ISRO y el resto son estimaciones sobre imágenes oficiales.':
+      'This model is a 3D approximation. Public NISAR CAD drawings are not available: documented dimensions come from NASA/JPL and ISRO, while the remaining dimensions are estimates based on official images.',
+    'Cargando el modelo 3D…': 'Loading the 3D model…',
+    'Controles del visor': 'Viewer controls',
+    'Vista': 'View',
+    'Isométrica': 'Isometric',
+    'Frontal': 'Front',
+    'Trasera': 'Rear',
+    'Lateral izq.': 'Left side',
+    'Lateral der.': 'Right side',
+    'Superior': 'Top',
+    'Inferior': 'Bottom',
+    'Detalle RIS': 'RIS detail',
+    'Vista separada': 'Exploded view',
+    'Capas': 'Layers',
+    'Carteles': 'Callouts',
+    'Numeración': 'Numbering',
+    'Cotas': 'Dimensions',
+    'Malla': 'Mesh',
+    'Rotación': 'Rotation',
+    'Observatorio NISAR en configuración desplegada':
+      'NISAR observatory in deployed configuration',
+    'Modelo a escala real construido con las cifras publicadas por NASA/JPL, ISRO y Northrop Grumman. Cada dato lleva una etiqueta que indica si está documentado o es una estimación.':
+      'A full-scale model built from figures published by NASA/JPL, ISRO, and Northrop Grumman. Each item is labeled as documented or estimated.',
+    'Componentes': 'Components',
+    'Misión': 'Mission',
+    'Órbita': 'Orbit',
+    'Inclinación': 'Inclination',
+    'Repetición': 'Repeat cycle',
+    'Franja': 'Swath',
+    'Lanzamiento': 'Launch',
+    'Cohete': 'Launch vehicle',
+    'Método': 'Method',
+    'No existen planos CAD públicos de NISAR.':
+      'Public NISAR CAD drawings are not available.',
+    'Las dimensiones etiquetadas como documentadas proceden de las fuentes de abajo y se usan como restricciones exactas (12 m, 9 m, 5,5 m, 23 m² de paneles, 24 y 48 elementos de alimentación). Las etiquetadas como estimadas se midieron por proporción sobre imágenes oficiales y sirven solo para darle forma al modelo. La estructura de módulos del reflector y la celosía inferior son reconstrucciones visuales.':
+      'Dimensions labeled as documented come from the sources below and are used as exact constraints (12 m, 9 m, 5.5 m, 23 m² of solar panels, and 24 and 48 feed elements). Dimensions labeled as estimated were measured proportionally from official images and are only used to shape the model. The reflector module structure and lower truss are visual reconstructions.',
+    'Fuentes': 'Sources',
+    'JPL · Press kit, datos rápidos': 'JPL · Press kit, quick facts',
+    'JPL · Press kit, la nave': 'JPL · Press kit, spacecraft',
+    'NASA Science · Sobre el satélite': 'NASA Science · About the satellite',
+    'JPL · Despliegue del reflector': 'JPL · Reflector deployment',
+    'JPL · Brazo de cuatro bisagras': 'JPL · Four-hinge boom',
+    'ISRO · Misión GSLV‑F16 / NISAR': 'ISRO · GSLV‑F16 / NISAR mission',
+    'Northrop Grumman · Reflector AstroMesh':
+      'Northrop Grumman · AstroMesh reflector',
+    'NASA · Manual científico NISAR': 'NASA · NISAR science handbook',
+    'eoPortal · NISAR': 'eoPortal · NISAR',
+    'No se pudo cargar Three.js. Comprueba la conexión y recarga la página.':
+      'Could not load Three.js. Check your connection and reload the page.',
+    'Tu navegador no pudo iniciar WebGL.':
+      'Your browser could not initialize WebGL.',
+    'Documentado': 'Documented',
+    'Estimado': 'Estimated',
+    'Sin verificar': 'Unverified',
+    'Reflector de malla': 'Mesh reflector',
+    'Brazo del reflector': 'Reflector boom',
+    'Paneles solares': 'Solar arrays',
+    'Plataforma I‑3K': 'I‑3K platform',
+    'Estructura del instrumento (RIS)': 'Instrument structure (RIS)',
+    'Alimentador de radiofrecuencia L/S': 'L/S radio-frequency feed',
+    'Electrónica L‑SAR': 'L-SAR electronics',
+    'Electrónica S‑SAR': 'S-SAR electronics',
+    'Antena GNSS': 'GNSS antenna',
+    'Arcos de soporte inferiores': 'Lower support trusses',
+    'Herrajes de unión de paneles': 'Solar-array mounting hardware',
+    'Forma tomada de tu captura': 'Shape based on the provided image',
+    'ISRO · forma tomada de tu captura': 'ISRO · shape based on the provided image',
+    'NASA/JPL · Northrop Grumman Astro Aerospace':
+      'NASA/JPL · Northrop Grumman Astro Aerospace',
+    'U R Rao Satellite Centre': 'U R Rao Satellite Centre',
+    'Diámetro': 'Diameter',
+    'Tipo': 'Type',
+    'Plegado → desplegado': 'Stowed → deployed',
+    'Montaje': 'Mounting',
+    'Profundidad del tambor': 'Drum depth',
+    'Curvatura de la malla frontal': 'Front mesh curvature',
+    'Longitud desplegada': 'Deployed length',
+    'Bisagras': 'Hinges',
+    'Construcción': 'Construction',
+    'Despliegue': 'Deployment',
+    'Tramos': 'Sections',
+    'Sección y ángulos': 'Cross-section and angles',
+    'Conjuntos': 'Arrays',
+    'Paneles': 'Panels',
+    'Área total': 'Total area',
+    'Potencia': 'Power',
+    'Batería': 'Battery',
+    'Separación bus–panel': 'Bus-to-array spacing',
+    'Masa de lanzamiento': 'Launch mass',
+    'Longitud bus + carga útil': 'Bus + payload length',
+    'Actitud': 'Attitude control',
+    'Propulsión': 'Propulsion',
+    'Cubo del bus': 'Bus dimensions',
+    'Propulsores dibujados': 'Thrusters shown',
+    'Origen': 'Origin',
+    'Función': 'Function',
+    'Longitud': 'Length',
+    'Sección': 'Cross-section',
+    'Longitud de onda S': 'S-band wavelength',
+    'Tamaño y paso de los elementos': 'Element size and spacing',
+    'Banda': 'Band',
+    'Técnica': 'Technique',
+    'Resolución': 'Resolution',
+    'Ubicación de los paneles': 'Panel location',
+    'Ubicación del panel': 'Panel location',
+    'Proveedor': 'Provider',
+    'Posición y forma': 'Position and shape',
+    'Estado': 'Status',
+    'Forma y posición': 'Shape and position',
+    'Conjuntos solares': 'Solar arrays',
+    'Forma': 'Shape',
+    'Medidas': 'Measurements',
+    'Qué es': 'What it is',
+    'Para qué sirve': 'What it does',
+    'Si no la tuviera': 'Without this component',
+    'Datos y fuentes': 'Data and sources',
+    'Cerrar': 'Close',
+    'La división en 24 módulos del armazón y la disposición de las redes interiores son una reconstrucción visual. No hay planos públicos del AstroMesh de NISAR.':
+      'The 24-module truss division and the internal mesh layout are visual reconstructions. Public NISAR AstroMesh drawings are not available.',
+    'JPL da 1,8 × 2,2 m sin decir si es por panel o por conjunto. Por panel concuerda con los 23 m² totales y con los 5,5 m de longitud por lado.':
+      'JPL lists 1.8 × 2.2 m without specifying whether this is per panel or per array. Per panel, it matches the 23 m² total and the 5.5 m length on each side.',
+    'Puede ser un adaptador de lanzamiento u otro elemento auxiliar. Desactiva la capa si quieres ver solo lo documentado.':
+      'This could be a launch adapter or another auxiliary component. Turn off this layer to view only documented components.',
+    'No hay planos públicos de estos herrajes: el perfil sale de tu imagen.':
+      'Public drawings of this mounting hardware are unavailable; its profile is based on the provided image.',
+    'Concentra y dirige las ondas del radar hacia la Tierra.':
+      'Focuses and directs radar waves toward Earth.',
+    'Reflector parabólico descentrado de 12 m, de malla de alambre bañada en oro sobre un armazón perimetral. El alimentador, en su foco (a unos 9 m, la longitud del brazo), lo ilumina desde abajo.':
+      'A 12 m offset parabolic reflector made of gold-plated wire mesh over a perimeter truss. The feed, at its focal point (about 9 m away, the length of the boom), illuminates it from below.',
+    'Enfoca los pulsos de los dos radares hacia el suelo, iluminando una franja de 242 km, y concentra los ecos de vuelta en el alimentador. Su gran apertura da la resolución y la sensibilidad.':
+      'It focuses pulses from both radars toward the ground across a 242 km swath and concentrates the returning echoes at the feed. Its large aperture provides resolution and sensitivity.',
+    'El alimentador, solo, formaría un haz ancho y débil: no habría franja de 242 km ni imágenes de esa resolución. Una antena sólida de ese tamaño no cabría en el cohete.':
+      'The feed alone would produce a broad, weak beam: there would be no 242 km swath or images at this resolution. A solid antenna this size would not fit in the launch vehicle.',
+    'Sostiene el reflector a 9 m del cuerpo.':
+      'Holds the reflector 9 m from the spacecraft body.',
+    'Brazo desplegable de 9 m con cuatro bisagras y un actuador de enclavamiento. Viajó plegado junto al cuerpo y se abrió en órbita, articulación a articulación, durante unos 4 días.':
+      'A 9 m deployable boom with four hinges and a latching actuator. It launched folded alongside the spacecraft and deployed in orbit, one joint at a time, over about four days.',
+    'Coloca el reflector en su posición exacta respecto al alimentador (fija la distancia focal de unos 9 m) y lo aleja del satélite para que el haz salga libre.':
+      'Positions the reflector precisely relative to the feed (setting the focal distance at about 9 m) and moves it away from the spacecraft so the beam can pass unobstructed.',
+    'El reflector quedaría plegado contra el cuerpo o desalineado del foco: no se formaría el haz y la misión no podría tomar imágenes.':
+      'The reflector would remain folded against the spacecraft or misaligned with the focal point: no beam would form, and the mission could not image the ground.',
+    'Convierten la luz solar en ≈ 5 kW eléctricos.':
+      'Convert sunlight into ≈ 5 kW of electrical power.',
+    'Dos conjuntos motorizados de tres paneles cada uno (≈ 23 m² en total), a ambos lados del cuerpo. Dan unos 5 kW con iluminación plena y cargan una batería de ion-litio.':
+      'Two motorized arrays of three panels each (≈ 23 m² total), one on each side of the spacecraft. They provide about 5 kW in full sunlight and charge a lithium-ion battery.',
+    'Alimentan todos los subsistemas, incluidos los radares L y S, que necesitan mucha potencia media para transmitir.':
+      'Power all subsystems, including the L- and S-band radars, which require substantial average power to transmit.',
+    'El satélite dependería solo de la batería, que se agotaría pronto: sin energía no habría radar, ni control de actitud, ni comunicaciones.':
+      'The spacecraft would rely only on its battery, which would soon run out: without power there would be no radar, attitude control, or communications.',
+    'Plataforma de ISRO que mueve, controla y comunica el satélite.':
+      'ISRO platform that moves, controls, and communicates with the spacecraft.',
+    'Plataforma I-3K de ISRO (≈ 2 390 kg al lanzamiento). Incluye el ordenador de a bordo, control de actitud en 3 ejes (ruedas de reacción y magnetopares), 15 propulsores de hidracina y la comunicación de mando y telemetría.':
+      'ISRO I-3K platform (≈ 2,390 kg at launch). It includes the onboard computer, three-axis attitude control (reaction wheels and magnetorquers), 15 hydrazine thrusters, and command and telemetry communications.',
+    'Da energía, orientación, corrección de órbita, mando y enlace con tierra a los instrumentos, y mantiene al satélite apuntando a la Tierra en su órbita de 747 km.':
+      'Provides instrument power, orientation, orbit correction, commands, and ground communications, and keeps the spacecraft pointed toward Earth in its 747 km orbit.',
+    'Los radares serían una carga sin satélite: no podrían apuntar, corregir la órbita ni recibir órdenes.':
+      'The radars would be payloads without a spacecraft: they could not point, correct the orbit, or receive commands.',
+    'Esqueleto octogonal que une y alinea todo el instrumento.':
+      'Octagonal structure that joins and aligns the instrument.',
+    'Estructura octogonal aportada por NASA. Aloja las electrónicas L-SAR y S-SAR y a ella se fijan el brazo del reflector y el alimentador.':
+      'An octagonal structure supplied by NASA. It houses the L-SAR and S-SAR electronics and supports the reflector boom and feed.',
+    'Mantiene rígidas y alineadas entre sí las piezas del radar y las acopla al bus.':
+      'Keeps the radar components rigid and aligned with one another and attaches them to the bus.',
+    'No habría dónde montar electrónica, alimentador y brazo, ni una referencia común: el instrumento no podría integrarse como un solo radar.':
+      'There would be nowhere to mount the electronics, feed, or boom, and no shared reference: the instrument could not function as a unified radar.',
+    'Ilumina el reflector y recoge sus ecos.':
+      'Illuminates the reflector and receives its echoes.',
+    'Matriz activa orientada hacia arriba, en el foco del reflector: 24 módulos T/R en banda L (12 por polarización) y 48 en S (24 por polarización). Al transmitir ilumina toda la franja; al recibir forma haces digitales que siguen al eco (SweepSAR).':
+      'An active array facing upward at the reflector focus: 24 L-band T/R modules (12 per polarization) and 48 S-band modules (24 per polarization). It illuminates the full swath when transmitting and forms digital beams that follow the echo when receiving (SweepSAR).',
+    'Envía los pulsos al reflector y capta los ecos. Gracias a SweepSAR obtiene imágenes de más de 240 km de ancho sin perder resolución.':
+      'Sends pulses to the reflector and captures the echoes. SweepSAR enables images more than 240 km wide without sacrificing resolution.',
+    'El reflector sería un espejo sin fuente ni detector: no saldrían pulsos ni volverían ecos a ningún receptor.':
+      'The reflector would be a mirror without a source or detector: no pulses would be sent and no echoes would reach a receiver.',
+    'Electrónica del radar de banda L (NASA).':
+      'L-band radar electronics (NASA).',
+    'Módulos transmisores y receptores, procesado digital y alimentación del radar L: 1,25 GHz, λ 24 cm, polarimetría completa.':
+      'Transmit/receive modules, digital processing, and power for the L-band radar: 1.25 GHz, λ 24 cm, full polarimetry.',
+    'Genera y amplifica los pulsos, y digitaliza y procesa los ecos. La banda L atraviesa la vegetación y detecta deformaciones del terreno de hasta 4 mm/año a gran escala.':
+      'Generates and amplifies pulses, and digitizes and processes echoes. L-band penetrates vegetation and detects large-scale ground deformation as small as 4 mm/year.',
+    'No habría radar L: se perderían la biomasa de los bosques, la deformación del suelo y la dinámica del hielo, que son el núcleo de la ciencia de NASA.':
+      'There would be no L-band radar: forest biomass, ground deformation, and ice dynamics—the core of NASA’s science—would be lost.',
+    'Electrónica del radar de banda S (ISRO).':
+      'S-band radar electronics (ISRO).',
+    'Electrónica de transmisión, recepción y procesado del radar S: 3,2 GHz, λ 9,4 cm, desarrollada por el Space Applications Centre de ISRO. Funciona sola o junto al L.':
+      'Transmit, receive, and processing electronics for the S-band radar: 3.2 GHz, λ 9.4 cm, developed by ISRO’s Space Applications Centre. It operates alone or alongside L-band.',
+    'Complementa al L: es más sensible a la vegetación ligera y a la humedad del suelo y de la nieve.':
+      'Complements L-band: it is more sensitive to sparse vegetation and moisture in soil and snow.',
+    'NISAR sería un radar de una sola banda: se perdería la observación simultánea L+S, única en una misión, y la sensibilidad a cultivos y nieve húmeda.':
+      'NISAR would be a single-band radar: its unique simultaneous L+S observations and sensitivity to crops and wet snow would be lost.',
+    'Da posición y hora precisas a la nave.':
+      'Provides precise spacecraft position and time.',
+    'Antena de los receptores GPS aportados por NASA. Entrega el mensaje horario GPS y una señal de 1 pulso por segundo a la nave y a los radares.':
+      'Antenna for NASA-supplied GPS receivers. It provides GPS timing messages and a one-pulse-per-second signal to the spacecraft and radars.',
+    'Permite determinar la órbita con precisión y da la referencia de tiempo a bordo. El radar necesita saber exactamente dónde está para comparar imágenes de distintas pasadas.':
+      'Enables precise orbit determination and provides an onboard time reference. The radar must know its exact position to compare images from different passes.',
+    'Posición y hora serían menos precisas: las imágenes de pasadas distintas no se alinearían bien y se perdería la precisión milimétrica de las mediciones.':
+      'Position and timing would be less precise: images from different passes would not align well, and millimeter-level measurement precision would be lost.',
+    'Sin verificar: no figura en las fuentes consultadas.':
+      'Unverified: not listed in the sources reviewed.',
+    'Dos arcos perforados con tirantes bajo la estructura, con la forma de tu captura. NASA e ISRO no los describen en la documentación consultada.':
+      'Two perforated arches with struts below the structure, shaped to match the provided image. NASA and ISRO do not describe them in the documentation reviewed.',
+    'No documentado. Por su posición podría ser un soporte estructural o un adaptador de lanzamiento (hipótesis).':
+      'Not documented. Based on its position, it could be a structural support or launch adapter (hypothesis).',
+    'No se puede afirmar. Si fuera un refuerzo, faltaría rigidez bajo la estructura; si fuera un adaptador de lanzamiento, el satélite no podría acoplarse al cohete.':
+      'This cannot be confirmed. If it is a brace, the structure would lack support below; if it is a launch adapter, the spacecraft could not attach to the launch vehicle.',
+    'Unen cada ala solar al cuerpo del satélite.':
+      'Connect each solar wing to the spacecraft body.',
+    'Bastidor con taco de anclaje en la cara del bus, dos brazos en diagonal, un montante y un larguero vertical de 2,2 m donde se fija el primer panel. Perfil copiado de tu captura; los planos reales no son públicos.':
+      'A frame with a mounting block on the bus, two diagonal arms, an upright, and a 2.2 m vertical spar to which the first panel attaches. Its profile is based on the provided image; actual drawings are not public.',
+    'Sujetan las alas plegadas durante el lanzamiento, las separan del cuerpo y las orientan al desplegarse, y transmiten la carga del panel al bus. NASA indica que los conjuntos son motorizados.':
+      'They hold the folded solar wings during launch, move them away from the body and orient them during deployment, and transfer panel loads to the bus. NASA states that the arrays are motorized.',
+    'Los paneles no se podrían desplegar ni sujetar: quedarían plegados o sueltos, sin energía suficiente y con riesgo para la estructura.':
+      'The panels could not deploy or remain secured: they would stay folded or loose, leaving insufficient power and putting the structure at risk.',
+  }
+
+  const translateText = (value) => {
+    const trimmed = value.trim()
+    const translation = translations[trimmed]
+    return translation === undefined
+      ? value
+      : value.replace(trimmed, translation)
+  }
+
+  const translateNode = (node) => {
+    const current = node.nodeValue ?? ''
+    const translated = translateText(current)
+    if (translated !== current) node.nodeValue = translated
+  }
+
+  const translateAttribute = (element, attribute) => {
+    const current = element.getAttribute(attribute)
+    if (current === null) return
+    const translated = translateText(current)
+    if (translated !== current) element.setAttribute(attribute, translated)
+  }
+
+  const translateTree = (root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.parentElement?.closest('script, style')
+          ? NodeFilter.FILTER_REJECT
+          : NodeFilter.FILTER_ACCEPT
+      },
+    })
+    let node
+    while ((node = walker.nextNode())) {
+      translateNode(node)
+    }
+
+    if (root instanceof Element) {
+      for (const attribute of ['aria-label', 'title']) {
+        translateAttribute(root, attribute)
+      }
+    }
+    root.querySelectorAll?.('[aria-label], [title]').forEach((element) => {
+      for (const attribute of ['aria-label', 'title']) {
+        translateAttribute(element, attribute)
+      }
+    })
+  }
+
+  translateTree(document.head)
+  translateTree(document.body)
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'characterData' && mutation.target instanceof Text) {
+        translateNode(mutation.target)
+      } else if (mutation.type === 'attributes' && mutation.target instanceof Element) {
+        if (mutation.attributeName) {
+          translateAttribute(mutation.target, mutation.attributeName)
+        }
+      } else {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof Element) translateTree(node)
+          else if (node instanceof Text) translateNode(node)
+        })
+      }
+    }
+  })
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['aria-label', 'title'],
+    characterData: true,
+    childList: true,
+    subtree: true,
+  })
+})()
+</script>
 </body></html>

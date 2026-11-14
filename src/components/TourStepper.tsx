@@ -3,48 +3,49 @@ import { createPortal } from 'react-dom'
 import { TOUR_STEPS, type TourStepId } from '../data/tourConfig'
 import type { Earthquake } from '../data/earthquakes'
 import type { GcovLayer, RadarLayer } from '../data/gcov'
+import { translate } from '../i18n'
 import './TourStepper.css'
 
 const INSAR_GUIDE_ITEMS = [
-  { title: 'Franjas · fase envuelta', src: '/franjas.png', aspect: 0.86 },
-  { title: 'Desplazamiento · LOS', src: '/desplazamiento.png', aspect: 0.86 },
+  { title: translate('Franjas · fase envuelta'), src: '/franjas.png', aspect: 0.86 },
+  { title: translate('Desplazamiento · LOS'), src: '/desplazamiento.png', aspect: 0.86 },
   {
-    title: 'Coherencia · calidad de señal',
+    title: translate('Coherencia · calidad de señal'),
     src: '/map_coherence.png',
     aspect: 0.86,
   },
   {
-    title: 'Desplazamiento este-oeste',
+    title: translate('Desplazamiento este-oeste'),
     src: '/data/venezuela/deformation/este_oeste_completo.png',
     aspect: 2.6,
   },
   {
-    title: 'Desplazamiento vertical',
+    title: translate('Desplazamiento vertical'),
     src: '/data/venezuela/deformation/vertical_completo.png',
     aspect: 2.6,
   },
   {
-    title: 'LOS · geometría ascendente',
+    title: translate('LOS · geometría ascendente'),
     src: '/data/venezuela/deformation/los_asc_mosaico.png',
     aspect: 2.6,
   },
   {
-    title: 'LOS · geometría descendente',
+    title: translate('LOS · geometría descendente'),
     src: '/data/venezuela/deformation/los_desc_mosaico.png',
     aspect: 2.6,
   },
   {
-    title: 'Gradiente de fase · ruptura',
+    title: translate('Gradiente de fase · ruptura'),
     src: '/data/venezuela/faults/gradiente_T162A.png',
     aspect: 1.03,
   },
   {
-    title: 'Gradiente de fase · T54D',
+    title: translate('Gradiente de fase · T54D'),
     src: '/data/venezuela/faults/gradiente_T54D.png',
     aspect: 1.03,
   },
-  { title: 'HH · 13 jun 2026', src: '/data/venezuela/gcov/gcov_hh_20260613.png', aspect: 1 },
-  { title: 'HV · 13 jun 2026', src: '/data/venezuela/gcov/gcov_hv_20260613.png', aspect: 1 },
+  { title: translate('HH · 13 jun 2026'), src: '/data/venezuela/gcov/gcov_hh_20260613.png', aspect: 1 },
+  { title: translate('HV · 13 jun 2026'), src: '/data/venezuela/gcov/gcov_hv_20260613.png', aspect: 1 },
 ]
 
 type RadarModuleId = 'interferometry' | 'deformation' | 'polarization' | 'rupture'
@@ -58,29 +59,29 @@ const RADAR_MODULES: {
 }[] = [
   {
     id: 'interferometry',
-    title: 'Interferometría',
-    summary: 'Franjas, coherencia y calidad de la señal',
+    title: translate('Interferometría'),
+    summary: translate('Franjas, coherencia y calidad de la señal'),
     layerIndexes: [0, 2],
     initialLayer: 0,
   },
   {
     id: 'deformation',
-    title: 'Deformación',
-    summary: 'LOS, componentes y geometrías de observación',
+    title: translate('Deformación'),
+    summary: translate('LOS, componentes y geometrías de observación'),
     layerIndexes: [1, 3, 4, 5, 6],
     initialLayer: 1,
   },
   {
     id: 'polarization',
-    title: 'Polarización',
-    summary: 'Qué destacan los retornos HH y HV',
+    title: translate('Polarización'),
+    summary: translate('Qué destacan los retornos HH y HV'),
     layerIndexes: [9, 10],
     initialLayer: 9,
   },
   {
     id: 'rupture',
-    title: 'Ruptura',
-    summary: 'Gradientes de fase y referencia del epicentro',
+    title: translate('Ruptura'),
+    summary: translate('Gradientes de fase y referencia del epicentro'),
     layerIndexes: [7, 8],
     initialLayer: 7,
   },
@@ -131,14 +132,10 @@ const AUTO_RADAR_LAYERS: RadarLayer[] = [
 ]
 
 const RADAR_MODULE_DESCRIPTIONS: Record<RadarModuleId, string> = {
-  deformation:
-    'Explora el movimiento observado en la línea de visión y las componentes estimadas. Las capas ascendentes y descendentes tienen geometrías y fechas distintas; las componentes este-oeste y vertical dependen de la hipótesis norte-sur igual a cero.',
-  interferometry:
-    'La fase muestra cambios de distancia proyectados hacia el radar y la coherencia indica dónde la comparación entre fechas es más confiable. Ninguna de las dos identifica por sí sola la causa de la señal.',
-  polarization:
-    'HH y HV muestran la intensidad del retorno del radar, no desplazamiento. Una zona oscura indica menor retorno y podría deberse a una superficie lisa o a poca dispersión; por ejemplo, en el valle de Yaracuy podría ser un lote agrícola de caña de azúcar con suelo expuesto o cultivo bajo. Es solo una posibilidad: el tono no identifica el cultivo ni su estado. Compara HH y HV con el contexto del terreno; HV puede resaltar la dispersión en vegetación, pero estas imágenes no clasifican automáticamente la cobertura.',
-  rupture:
-    'Los gradientes resaltan cambios espaciales rápidos de fase que pueden ayudar a inspeccionar posibles fracturas. La flecha amarilla señala el epicentro Mw 7.2.',
+  deformation: translate('Explora el movimiento observado en la línea de visión y las componentes estimadas. Las capas ascendentes y descendentes tienen geometrías y fechas distintas; las componentes este-oeste y vertical dependen de la hipótesis norte-sur igual a cero.'),
+  interferometry: translate('La fase muestra cambios de distancia proyectados hacia el radar y la coherencia indica dónde la comparación entre fechas es más confiable. Ninguna de las dos identifica por sí sola la causa de la señal.'),
+  polarization: translate('HH y HV muestran la intensidad del retorno del radar, no desplazamiento. Una zona oscura indica menor retorno y podría deberse a una superficie lisa o a poca dispersión; por ejemplo, en el valle de Yaracuy podría ser un lote agrícola de caña de azúcar con suelo expuesto o cultivo bajo. Es solo una posibilidad: el tono no identifica el cultivo ni su estado. Compara HH y HV con el contexto del terreno; HV puede resaltar la dispersión en vegetación, pero estas imágenes no clasifican automáticamente la cobertura.'),
+  rupture: translate('Los gradientes resaltan cambios espaciales rápidos de fase que pueden ayudar a inspeccionar posibles fracturas. La flecha amarilla señala el epicentro Mw 7.2.'),
 }
 
 interface TourStepperProps {
@@ -379,15 +376,15 @@ export const TourStepper: React.FC<TourStepperProps> = ({
       {currentStep === 'epicenters_3d' && (
         <div className="camera-hint-banner">
           <div className="camera-hint-text">
-            <strong>{isAutoPanning ? 'Paneo automático' : 'Cámara manual'}</strong>
-            <span>Arrastra para mover la cámara. El paneo se reanuda tras 2 s.</span>
+            <strong>{translate(isAutoPanning ? 'Paneo automático' : 'Cámara manual')}</strong>
+            <span>{translate('Arrastra para mover la cámara. El paneo se reanuda tras 2 s.')}</span>
           </div>
           <button
             className={`camera-toggle-btn ${isAutoPanning ? 'active' : ''}`}
             onClick={onToggleAutoPan}
-            title={isAutoPanning ? 'Pausar paneo' : 'Reanudar paneo'}
+            title={translate(isAutoPanning ? 'Pausar paneo' : 'Reanudar paneo')}
           >
-            {isAutoPanning ? 'Pausar' : 'Reanudar'}
+            {translate(isAutoPanning ? 'Pausar' : 'Reanudar')}
           </button>
         </div>
       )}
@@ -408,7 +405,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   key={stepKey}
                   className={`step-dot-btn ${isActive ? 'is-active' : ''} ${isCompleted ? 'is-completed' : ''}`}
                   onClick={() => onSelectStep(stepKey)}
-                  title={TOUR_STEPS[stepKey].title}
+                  title={translate(TOUR_STEPS[stepKey].title)}
                 >
                   <span className="step-dot-number">{stepNum}</span>
                 </button>
@@ -429,7 +426,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
         {/* Interactive Step-specific Controls */}
         {!isExpanded && currentStep === 'radar_zoom' && (
           <div className="tour-subcontrols radar-controls">
-            <p className="radar-modules-intro">Elige un tema para explorar sus capas y controles.</p>
+            <p className="radar-modules-intro">{translate('Elige un tema para explorar sus capas y controles.')}</p>
             <div className="radar-module-grid">
               {RADAR_MODULES.map((module, index) => (
                 <button
@@ -437,14 +434,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   className={`radar-module-card${activeRadarModule === module.id ? ' is-active' : ''}`}
                   type="button"
                   aria-pressed={activeRadarModule === module.id}
-                  aria-label={`Abrir módulo ${module.title}`}
+                  aria-label={translate('Abrir módulo {{title}}', { title: module.title })}
                   onClick={() => openInsarGuide(module.id)}
                 >
                   <span className="radar-module-number">0{index + 1}</span>
                   <span className="radar-module-card-copy">
                     <strong>{module.title}</strong>
                     <span>{module.summary}</span>
-                    <span className="radar-module-action">Abrir módulo</span>
+                    <span className="radar-module-action">{translate('Abrir módulo')}</span>
                   </span>
                   <span className="radar-module-arrow" aria-hidden="true">↗</span>
                 </button>
@@ -455,7 +452,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
 
         {!isExpanded && currentStep === 'epicenters_3d' && (
           <div className="tour-subcontrols epicenter-controls">
-            <span className="subcontrol-label">Seleccionar epicentro a inspeccionar:</span>
+            <span className="subcontrol-label">{translate('Seleccionar epicentro a inspeccionar:')}</span>
             <div className="epicenter-btn-group">
               {events.map((ev, idx) => (
                 <button
@@ -465,7 +462,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                 >
                   <span className="ep-dot" />
                   <span>
-                    {ev.place} (M{ev.magnitude.toFixed(1)})
+                    {translate(ev.place)} (M{ev.magnitude.toFixed(1)})
                   </span>
                 </button>
               ))}
@@ -476,8 +473,8 @@ export const TourStepper: React.FC<TourStepperProps> = ({
         {!isExpanded && currentStep === 'radar_zoom' && (
           <div className="tour-subcontrols finite-fault-controls">
             <div className="finite-fault-summary">
-              <span><strong>130</strong> subfallas · <strong>2</strong> segmentos</span>
-              <span>Rumbo 81° / 86,1° · buzamiento 78° · Mw 7.5</span>
+              <span><strong>130</strong> {translate('subfallas ·')} <strong>2</strong> {translate('segmentos')}</span>
+              <span>{translate('Rumbo 81° / 86,1° · buzamiento 78° · Mw 7.5')}</span>
             </div>
             <button
               className="finite-fault-view-3d-btn"
@@ -485,7 +482,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
               aria-pressed={isFaultModel3D}
               onClick={onToggleFaultView}
             >
-              {isFaultModel3D ? 'Volver a vista en planta' : 'Ver en 3D'}
+              {translate(isFaultModel3D ? 'Volver a vista en planta' : 'Ver en 3D')}
             </button>
             <button
               className={`finite-fault-layer-btn${showFaultModel ? ' is-active' : ''}`}
@@ -495,20 +492,20 @@ export const TourStepper: React.FC<TourStepperProps> = ({
             >
               <span className="finite-fault-swatch finite-fault-swatch--slip" aria-hidden="true" />
               <span className="finite-fault-layer-copy">
-                <strong>Falla finita</strong>
-                <small>Deslizamiento representado por subfalla</small>
+                <strong>{translate('Falla finita')}</strong>
+                <small>{translate('Deslizamiento representado por subfalla')}</small>
               </span>
-              <span className="finite-fault-layer-state">{showFaultModel ? 'Visible' : 'Oculta'}</span>
+              <span className="finite-fault-layer-state">{translate(showFaultModel ? 'Visible' : 'Oculta')}</span>
             </button>
             {showFaultModel && (
-              <div className="finite-fault-legend" aria-label="Leyenda del deslizamiento por subfalla">
-                <span>Deslizamiento por subfalla (m)</span>
+              <div className="finite-fault-legend" aria-label={translate('Leyenda del deslizamiento por subfalla')}>
+                <span>{translate('Deslizamiento por subfalla (m)')}</span>
                 <div className="finite-fault-legend-scale" aria-hidden="true" />
                 <div className="finite-fault-legend-labels">
-                  <span>Menor · 0 m</span>
-                  <span>Mayor · 1,82 m</span>
+                  <span>{translate('Menor · 0 m')}</span>
+                  <span>{translate('Mayor · 1,82 m')}</span>
                 </div>
-                <small>Selecciona una subfalla para consultar sus datos.</small>
+                <small>{translate('Selecciona una subfalla para consultar sus datos.')}</small>
               </div>
             )}
             <button
@@ -519,13 +516,13 @@ export const TourStepper: React.FC<TourStepperProps> = ({
             >
               <span className="finite-fault-swatch finite-fault-swatch--deformation" aria-hidden="true" />
               <span className="finite-fault-layer-copy">
-                <strong>Deformación superficial</strong>
-                <small>Componente vertical calculada · mm</small>
+                <strong>{translate('Deformación superficial')}</strong>
+                <small>{translate('Componente vertical calculada · mm')}</small>
               </span>
-              <span className="finite-fault-layer-state">{showSurfaceDeformation ? 'Visible' : 'Oculta'}</span>
+              <span className="finite-fault-layer-state">{translate(showSurfaceDeformation ? 'Visible' : 'Oculta')}</span>
             </button>
             {finiteFaultError && (
-              <p className="finite-fault-error" role="alert">{finiteFaultError}</p>
+              <p className="finite-fault-error" role="alert">{translate(finiteFaultError)}</p>
             )}
           </div>
         )}
@@ -540,7 +537,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
         <div className="tour-card-footer">
           {isExpanded ? (
             <button className="tour-nav-btn next tour-nav-btn--confirm" onClick={onDismissIntro}>
-              {currentStep === 'nisar_intro' ? 'Siguiente' : 'Cerrar'}
+              {translate(currentStep === 'nisar_intro' ? 'Siguiente' : 'Cerrar')}
             </button>
           ) : (
             <>
@@ -548,15 +545,15 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                 className="tour-nav-btn prev"
                 onClick={onPrev}
                 disabled={isFirst}
-                title="Paso anterior"
+                title={translate('Paso anterior')}
               >
-                Anterior
+                {translate('Anterior')}
               </button>
 
               <button
                 className="tour-nav-btn restart"
                 onClick={onRestart}
-                title="Reiniciar recorrido"
+                title={translate('Reiniciar recorrido')}
               >
                 <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
                   <path
@@ -568,16 +565,16 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                     strokeWidth="1.5"
                   />
                 </svg>
-                <span>Reiniciar</span>
+                <span>{translate('Reiniciar')}</span>
               </button>
 
               {isLast ? (
                 <button className="tour-nav-btn next complete" onClick={() => onSelectStep('dashboard')}>
-                  Ver informe →
+                  {translate('Ver informe')} →
                 </button>
               ) : (
                 <button className="tour-nav-btn next" onClick={onNext}>
-                  Siguiente
+                  {translate('Siguiente')}
                 </button>
               )}
             </>
@@ -597,7 +594,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
             >
               <header className="insar-guide-header">
                 <div>
-                  <span className="tour-badge-pill">MÓDULO DE EXPLORACIÓN</span>
+                  <span className="tour-badge-pill">{translate('MÓDULO DE EXPLORACIÓN')}</span>
                   <h2 id="insar-guide-title">{activeModule.title}</h2>
                   <p id="insar-guide-description">{RADAR_MODULE_DESCRIPTIONS[activeRadarModule]}</p>
                 </div>
@@ -605,9 +602,9 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   className="insar-guide-close"
                   type="button"
                   onClick={showModuleOnMap}
-                  aria-label="Ver el módulo en el mapa"
+                  aria-label={translate('Ver el módulo en el mapa')}
                 >
-                  Ver en el mapa
+                  {translate('Ver en el mapa')}
                 </button>
               </header>
 
@@ -615,7 +612,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                 <div className="insar-guide-layout">
                   <aside className="insar-guide-tools">
                     <label className="insar-guide-layer-label" htmlFor="insar-module-layer">
-                      Capa del mapa <span>· elige para cambiar la vista</span>
+                      {translate('Capa del mapa')} <span>· {translate('elige para cambiar la vista')}</span>
                     </label>
                     <div className="insar-layer-select-wrap">
                       <select
@@ -644,7 +641,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                     <div className={`radar-legend-bar radar-legend-bar--${GUIDE_LAYER_RADAR_LAYERS[activeGuideLayer]}`} aria-hidden="true" />
                     <div className="radar-legend-labels">
                       {(GUIDE_LAYER_LEGENDS[activeGuideLayer] ?? []).map((label, index) => (
-                        <span key={`${activeGuideLayer}-${index}`}>{label}</span>
+                        <span key={`${activeGuideLayer}-${index}`}>{translate(label)}</span>
                       ))}
                     </div>
 
@@ -656,15 +653,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                           aria-pressed={isGcovComparisonEnabled}
                           onClick={() => toggleGcovComparison(!isGcovComparisonEnabled)}
                         >
-                          {isGcovComparisonEnabled ? 'Desactivar comparación' : 'Comparar fechas'}
+                          {translate(isGcovComparisonEnabled ? 'Desactivar comparación' : 'Comparar fechas')}
                         </button>
                         <p className="radar-layer-note">
-                          Misma polarización a 96 días de diferencia. Humedad y vegetación
-                          también pueden explicar cambios.
+                          {translate('Misma polarización a 96 días de diferencia. Humedad y vegetación también pueden explicar cambios.')}
                         </p>
                         {isGcovComparisonEnabled && (
                           <>
-                            <label htmlFor="gcov-before-select">Polarización</label>
+                            <label htmlFor="gcov-before-select">{translate('Polarización')}</label>
                             <select
                               id="gcov-before-select"
                               className="tour-radar-select"
@@ -681,8 +677,8 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                               <option value="gcov_hv_before">HV</option>
                             </select>
                             <div className="gcov-comparison-dates" aria-hidden="true">
-                              <span>Izquierda · 13 de junio de 2026</span>
-                              <span>Derecha · 17 de septiembre de 2026</span>
+                              <span>{translate('Izquierda · 13 de junio de 2026')}</span>
+                              <span>{translate('Derecha · 17 de septiembre de 2026')}</span>
                             </div>
                             <input
                               id="gcov-swipe-slider"
@@ -693,7 +689,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                               step="0.01"
                               value={comparisonPosition}
                               onChange={(event) => onComparisonPositionChange(Number(event.currentTarget.value))}
-                              aria-label="Mover la cortina de comparación"
+                              aria-label={translate('Mover la cortina de comparación')}
                             />
                           </>
                         )}
@@ -708,20 +704,18 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                           aria-pressed={isLosGeometryComparisonEnabled}
                           onClick={() => toggleLosGeometryComparison(!isLosGeometryComparisonEnabled)}
                         >
-                          {isLosGeometryComparisonEnabled ? 'Desactivar cortina LOS' : 'Comparar geometrías LOS'}
+                          {translate(isLosGeometryComparisonEnabled ? 'Desactivar cortina LOS' : 'Comparar geometrías LOS')}
                         </button>
                         <p className="radar-layer-note">
-                          Ascendente T162A (13–25 jun) frente a descendente T54D (17–29 jun).
-                          Son miradas complementarias, no un antes y después; cada lado usa
-                          su propia escala.
+                          {translate('Ascendente T162A (13–25 jun) frente a descendente T54D (17–29 jun). Son miradas complementarias, no un antes y después; cada lado usa su propia escala.')}
                         </p>
                         {isLosGeometryComparisonEnabled && (
                           <>
                             <div className="radar-legend-labels">
-                              <span>Asc. ±417 mm</span>
-                              <span>Desc. ±344 mm</span>
+                              <span>{translate('Asc. ±417 mm')}</span>
+                              <span>{translate('Desc. ±344 mm')}</span>
                             </div>
-                            <label htmlFor="los-geometry-swipe-slider">Mover la cortina</label>
+                            <label htmlFor="los-geometry-swipe-slider">{translate('Mover la cortina')}</label>
                             <input
                               id="los-geometry-swipe-slider"
                               className="gcov-swipe-slider"
@@ -731,7 +725,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                               step="0.01"
                               value={comparisonPosition}
                               onChange={(event) => onComparisonPositionChange(Number(event.currentTarget.value))}
-                              aria-label="Mover la cortina entre geometrías LOS"
+                              aria-label={translate('Mover la cortina entre geometrías LOS')}
                             />
                           </>
                         )}
@@ -742,8 +736,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                       <div className="insar-module-controls">
                         <div className="radar-fault-legend">
                           <p className="radar-layer-note">
-                            La flecha amarilla ubica el epicentro Mw 7.2; no representa una
-                            traza de ruptura.
+                            {translate('La flecha amarilla ubica el epicentro Mw 7.2; no representa una traza de ruptura.')}
                           </p>
                         </div>
                       </div>
@@ -753,24 +746,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 0 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Franjas: fase envuelta</h3>
+                        <h3>{translate('Franjas: fase envuelta')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> el radar tomó imágenes en
-                          dos fechas y las comparó. Cada ciclo completo de color representa
-                          unos 12,1 cm de cambio relativo de distancia en la dirección en que
-                          mira el radar (LOS). Cuando las franjas aparecen más juntas, la fase
-                          cambia más rápidamente en una distancia menor: si la señal se debe
-                          a deformación, indica un gradiente LOS más pronunciado, no que el
-                          terreno necesariamente se haya abierto o separado.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('El radar tomó imágenes en dos fechas y las comparó. Cada ciclo completo de color representa unos 12,1 cm de cambio relativo de distancia en la dirección en que mira el radar (LOS). Cuando las franjas aparecen más juntas, la fase cambia más rápidamente en una distancia menor: si la señal se debe a deformación, indica un gradiente LOS más pronunciado, no que el terreno necesariamente se haya abierto o separado.')}
                         </p>
                         <p>
-                          <strong>Cómo se preparó:</strong> se combinaron grupos de 3 × 3
-                          píxeles y se ocultaron las zonas donde la señal era poco consistente.
-                          La fase es cíclica: los colores se repiten, por lo que las franjas
-                          no indican por sí solas el cambio total ni si el movimiento fue
-                          hacia el satélite o en sentido contrario. Un gradiente fuerte también
-                          puede verse afectado por ruido, atmósfera o errores residuales del
-                          procesamiento; no confirma por sí solo la causa de la señal.
+                          <strong>{translate('Cómo se preparó:')}</strong>{' '}
+                          {translate('Se combinaron grupos de 3 × 3 píxeles y se ocultaron las zonas donde la señal era poco consistente. La fase es cíclica: los colores se repiten, por lo que las franjas no indican por sí solas el cambio total ni si el movimiento fue hacia el satélite o en sentido contrario. Un gradiente fuerte también puede verse afectado por ruido, atmósfera o errores residuales del procesamiento; no confirma por sí solo la causa de la señal.')}
                         </p>
                       </div>
                     </article>
@@ -779,28 +762,17 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 1 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Estimación de desplazamiento en LOS</h3>
+                        <h3>{translate('Estimación de desplazamiento en LOS')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> este mapa estima cuánto
-                          cambió la distancia entre el suelo y el satélite entre las dos
-                          observaciones. Azul y rojo indican valores con signo opuesto; no
-                          significan oeste y este. El radar solo mide desde su propia línea
-                          de visión, así que este mapa no separa cuánto fue movimiento
-                          horizontal y cuánto vertical.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Este mapa estima cuánto cambió la distancia entre el suelo y el satélite entre las dos observaciones. Azul y rojo indican valores con signo opuesto; no significan oeste y este. El radar solo mide desde su propia línea de visión, así que este mapa no separa cuánto fue movimiento horizontal y cuánto vertical.')}
                         </p>
                         <p>
-                          <strong>Cómo se calculó:</strong> se restó la estimación de la
-                          señal ionosférica de la fase desenrollada y se convirtió el
-                          resultado a centímetros. Luego se tomó la mediana como referencia
-                          provisional. Se usaron píxeles con coherencia mayor que 0,25 y
-                          componente conectado válido. La convención física del signo no
-                          está verificada para esta visualización.
+                          <strong>{translate('Cómo se calculó:')}</strong>{' '}
+                          {translate('Se restó la estimación de la señal ionosférica de la fase desenrollada y se convirtió el resultado a centímetros. Luego se tomó la mediana como referencia provisional. Se usaron píxeles con coherencia mayor que 0,25 y componente conectado válido. La convención física del signo no está verificada para esta visualización.')}
                         </p>
                         <p>
-                          La escala de color va de −40 a +40 cm; los valores que exceden
-                          ese rango aparecen saturados. Es un cambio relativo estimado, no
-                          el desplazamiento total ni una medición que confirme cuánto del
-                          cambio fue causado por el sismo.
+                          {translate('La escala de color va de −40 a +40 cm; los valores que exceden ese rango aparecen saturados. Es un cambio relativo estimado, no el desplazamiento total ni una medición que confirme cuánto del cambio fue causado por el sismo.')}
                         </p>
                       </div>
                     </article>
@@ -809,19 +781,13 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 2 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Coherencia: qué tan confiable es la señal</h3>
+                        <h3>{translate('Coherencia: qué tan confiable es la señal')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> compara si el radar vio
-                          una superficie parecida en las dos fechas. Amarillo indica una señal
-                          más consistente; azul, una menos consistente. Donde es baja, hay
-                          menos confianza en las franjas y en el desplazamiento estimado.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Compara si el radar vio una superficie parecida en las dos fechas. Amarillo indica una señal más consistente; azul, una menos consistente. Donde es baja, hay menos confianza en las franjas y en el desplazamiento estimado.')}
                         </p>
                         <p>
-                          El gran sector azul al norte de la costa es el mar Caribe: el agua
-                          cambia de aspecto para el radar entre observaciones y suele dar una
-                          señal poco consistente. Las zonas azules pequeñas en tierra indican
-                          baja coherencia, pero este mapa por sí solo no permite saber su causa.
-                          La coherencia mide calidad, no movimiento.
+                          {translate('El gran sector azul al norte de la costa es el mar Caribe: el agua cambia de aspecto para el radar entre observaciones y suele dar una señal poco consistente. Las zonas azules pequeñas en tierra indican baja coherencia, pero este mapa por sí solo no permite saber su causa. La coherencia mide calidad, no movimiento.')}
                         </p>
                       </div>
                     </article>
@@ -829,22 +795,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 3 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Desplazamiento este-oeste</h3>
+                        <h3>{translate('Desplazamiento este-oeste')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> el mapa estima cuánto se
-                          movió el terreno hacia el este o el oeste. Los valores positivos
-                          representan movimiento al este y los negativos al oeste. El patrón
-                          opuesto a ambos lados de la falla es compatible con movimiento
-                          lateral dextral.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('El mapa estima cuánto se movió el terreno hacia el este o el oeste. Los valores positivos representan movimiento al este y los negativos al oeste. El patrón opuesto a ambos lados de la falla es compatible con movimiento lateral dextral.')}
                         </p>
                         <p>
-                          <strong>Cómo se estimó:</strong> se combinaron las observaciones LOS
-                          ascendente y descendente, suponiendo que el movimiento norte-sur es
-                          cero. Las observaciones abarcan el 13–25 de junio (ascendente) y
-                          el 17–29 de junio (descendente). Por eso es una descomposición
-                          condicionada por esa hipótesis, no una medición independiente de
-                          las tres componentes. La malla es de aproximadamente 500 m y la
-                          escala de color llega a cerca de ±619 mm.
+                          <strong>{translate('Cómo se estimó:')}</strong>{' '}
+                          {translate('Se combinaron las observaciones LOS ascendente y descendente, suponiendo que el movimiento norte-sur es cero. Las observaciones abarcan el 13–25 de junio (ascendente) y el 17–29 de junio (descendente). Por eso es una descomposición condicionada por esa hipótesis, no una medición independiente de las tres componentes. La malla es de aproximadamente 500 m y la escala de color llega a cerca de ±619 mm.')}
                         </p>
                       </div>
                     </article>
@@ -852,20 +810,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 4 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Desplazamiento vertical</h3>
+                        <h3>{translate('Desplazamiento vertical')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> esta capa representa la
-                          componente vertical estimada: positivo hacia arriba y negativo hacia
-                          abajo. La señal es menor que la componente este-oeste y debe leerse
-                          con cautela.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Esta capa representa la componente vertical estimada: positivo hacia arriba y negativo hacia abajo. La señal es menor que la componente este-oeste y debe leerse con cautela.')}
                         </p>
                         <p>
-                          <strong>Cómo se estimó:</strong> se resolvieron las observaciones LOS
-                          ascendente (13–25 de junio) y descendente (17–29 de junio) con la
-                          misma hipótesis de movimiento norte-sur igual a cero. La capa no
-                          es una medición vertical directa; los errores de ambas observaciones
-                          y la hipótesis pueden afectar el resultado. La escala completa es
-                          aproximadamente ±125 mm.
+                          <strong>{translate('Cómo se estimó:')}</strong>{' '}
+                          {translate('Se resolvieron las observaciones LOS ascendente (13–25 de junio) y descendente (17–29 de junio) con la misma hipótesis de movimiento norte-sur igual a cero. La capa no es una medición vertical directa; los errores de ambas observaciones y la hipótesis pueden afectar el resultado. La escala completa es aproximadamente ±125 mm.')}
                         </p>
                       </div>
                     </article>
@@ -873,19 +825,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 5 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Desplazamiento LOS: geometría ascendente</h3>
+                        <h3>{translate('Desplazamiento LOS: geometría ascendente')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> este mosaico muestra el
-                          movimiento proyectado sobre la línea de visión del satélite en una
-                          pasada ascendente. No separa por sí solo el movimiento este-oeste,
-                          norte-sur y vertical.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Este mosaico muestra el movimiento proyectado sobre la línea de visión del satélite en una pasada ascendente. No separa por sí solo el movimiento este-oeste, norte-sur y vertical.')}
                         </p>
                         <p>
-                          <strong>Cómo leerlo:</strong> los tonos representan milímetros en la
-                          escala indicada. Este mosaico usa la geometría ascendente del
-                          13–25 de junio. La geometría observa el terreno desde una dirección
-                          distinta a la descendente; sus valores no son una imagen anterior
-                          o posterior de la otra.
+                          <strong>{translate('Cómo leerlo:')}</strong>{' '}
+                          {translate('Los tonos representan milímetros en la escala indicada. Este mosaico usa la geometría ascendente del 13–25 de junio. La geometría observa el terreno desde una dirección distinta a la descendente; sus valores no son una imagen anterior o posterior de la otra.')}
                         </p>
                       </div>
                     </article>
@@ -893,20 +840,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 6 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Desplazamiento LOS: geometría descendente</h3>
+                        <h3>{translate('Desplazamiento LOS: geometría descendente')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> este mosaico muestra el
-                          movimiento proyectado sobre la línea de visión durante una pasada
-                          descendente. Cada valor combina la contribución de los movimientos
-                          horizontales y verticales según la dirección de observación.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Este mosaico muestra el movimiento proyectado sobre la línea de visión durante una pasada descendente. Cada valor combina la contribución de los movimientos horizontales y verticales según la dirección de observación.')}
                         </p>
                         <p>
-                          <strong>Cómo compararlo:</strong> junto con la geometría ascendente
-                          ayuda a estimar componentes del movimiento, pero no es una
-                          comparación antes/después. Este mosaico cubre el 17–29 de junio;
-                          la pasada ascendente cubre el 13–25. Tienen direcciones de mirada
-                          y ventanas de adquisición diferentes, así que el signo y la magnitud
-                          se interpretan en la geometría de cada una.
+                          <strong>{translate('Cómo compararlo:')}</strong>{' '}
+                          {translate('Junto con la geometría ascendente ayuda a estimar componentes del movimiento, pero no es una comparación antes/después. Este mosaico cubre el 17–29 de junio; la pasada ascendente cubre el 13–25. Tienen direcciones de mirada y ventanas de adquisición diferentes, así que el signo y la magnitud se interpretan en la geometría de cada una.')}
                         </p>
                       </div>
                     </article>
@@ -914,22 +855,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 7 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Gradiente de fase · ruptura</h3>
+                        <h3>{translate('Gradiente de fase · ruptura')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> el gradiente resalta
-                          dónde cambia rápidamente la fase interferométrica en el mapa.
-                          Una señal lineal puede ayudar a localizar un posible límite de
-                          deformación, pero no es por sí sola una medida de desplazamiento
-                          ni prueba de una ruptura superficial.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('El gradiente resalta dónde cambia rápidamente la fase interferométrica en el mapa. Una señal lineal puede ayudar a localizar un posible límite de deformación, pero no es por sí sola una medida de desplazamiento ni prueba de una ruptura superficial.')}
                         </p>
                         <p>
-                          <strong>Cómo leerlo:</strong> la imagen muestra el gradiente de fase
-                          del par ascendente T162A, del 13–25 de junio, sin la traza vectorial
-                          superpuesta. La pasada descendente T54D observa esta misma zona
-                          desde otro ángulo y en fechas distintas; es otra adquisición, no
-                          la misma imagen girada. Los cambios lineales pueden ayudar a localizar un
-                          posible límite de deformación, pero no confirman por sí solos una
-                          ruptura superficial.
+                          <strong>{translate('Cómo leerlo:')}</strong>{' '}
+                          {translate('La imagen muestra el gradiente de fase del par ascendente T162A, del 13–25 de junio, sin la traza vectorial superpuesta. La pasada descendente T54D observa esta misma zona desde otro ángulo y en fechas distintas; es otra adquisición, no la misma imagen girada. Los cambios lineales pueden ayudar a localizar un posible límite de deformación, pero no confirman por sí solos una ruptura superficial.')}
                         </p>
                       </div>
                     </article>
@@ -937,19 +870,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 8 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>Gradiente de fase · T54D</h3>
+                        <h3>{translate('Gradiente de fase · T54D')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> este gradiente resalta
-                          cambios espaciales rápidos de fase desde una geometría descendente.
-                          Puede ayudar a inspeccionar señales lineales asociadas a deformación,
-                          pero no mide desplazamiento por sí solo.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('Este gradiente resalta cambios espaciales rápidos de fase desde una geometría descendente. Puede ayudar a inspeccionar señales lineales asociadas a deformación, pero no mide desplazamiento por sí solo.')}
                         </p>
                         <p>
-                          <strong>Cómo leerlo:</strong> corresponde al par T54D del 17–29 de
-                          junio. Observa la misma zona que T162A desde otro ángulo y con
-                          fechas distintas: es otra adquisición, no la misma imagen girada.
-                          No debe leerse como una imagen antes/después. La flecha amarilla ubica el epicentro, no
-                          una traza de ruptura ni una confirmación independiente en terreno.
+                          <strong>{translate('Cómo leerlo:')}</strong>{' '}
+                          {translate('Corresponde al par T54D del 17–29 de junio. Observa la misma zona que T162A desde otro ángulo y con fechas distintas: es otra adquisición, no la misma imagen girada. No debe leerse como una imagen antes/después. La flecha amarilla ubica el epicentro, no una traza de ruptura ni una confirmación independiente en terreno.')}
                         </p>
                       </div>
                     </article>
@@ -957,21 +885,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 9 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>HH: polarización horizontal</h3>
+                        <h3>{translate('HH: polarización horizontal')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> la primera letra indica
-                          cómo transmite el radar y la segunda cómo recibe el eco. HH
-                          significa que transmite una onda horizontal y recibe una onda
-                          horizontal. Es una medición de la energía que vuelve al satélite,
-                          no una fotografía del terreno.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('La primera letra indica cómo transmite el radar y la segunda cómo recibe el eco. HH significa que transmite una onda horizontal y recibe una onda horizontal. Es una medición de la energía que vuelve al satélite, no una fotografía del terreno.')}
                         </p>
                         <p>
-                          <strong>Cómo se preparó:</strong> la capa muestra el término HHHH
-                          de frecuencia A del producto GCOV. Es retrodispersión gamma-0,
-                          expresada en decibelios y colocada en el mapa. Un retorno alto puede
-                          deberse a suelo rugoso o a estructuras que dispersan la señal hacia
-                          el radar. La humedad, la orientación y la vegetación también
-                          influyen, así que HH no identifica por sí sola el tipo de superficie.
+                          <strong>{translate('Cómo se preparó:')}</strong>{' '}
+                          {translate('La capa muestra el término HHHH de frecuencia A del producto GCOV. Es retrodispersión gamma-0, expresada en decibelios y colocada en el mapa. Un retorno alto puede deberse a suelo rugoso o a estructuras que dispersan la señal hacia el radar. La humedad, la orientación y la vegetación también influyen, así que HH no identifica por sí sola el tipo de superficie.')}
                         </p>
                       </div>
                     </article>
@@ -979,21 +900,14 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   {activeGuideLayer === 10 && (
                     <article className="insar-guide-section insar-guide-section--details">
                       <div className="insar-guide-copy">
-                        <h3>HV: polarización cruzada</h3>
+                        <h3>{translate('HV: polarización cruzada')}</h3>
                         <p>
-                          <strong>En explicación sencilla:</strong> HV significa que el radar
-                          transmite una onda horizontal y recibe el eco en vertical. La
-                          superficie cambia parte de la polarización de la onda. Esta respuesta
-                          puede ser más fuerte cuando la señal interactúa con muchas ramas y
-                          hojas en distintas direcciones.
+                          <strong>{translate('En explicación sencilla:')}</strong>{' '}
+                          {translate('HV significa que el radar transmite una onda horizontal y recibe el eco en vertical. La superficie cambia parte de la polarización de la onda. Esta respuesta puede ser más fuerte cuando la señal interactúa con muchas ramas y hojas en distintas direcciones.')}
                         </p>
                         <p>
-                          <strong>Cómo se preparó:</strong> la capa muestra el término HVHV
-                          de frecuencia A del GCOV, como retrodispersión gamma-0 en decibelios.
-                          Un retorno HV relativamente alto puede ser compatible con
-                          dispersión dentro de vegetación, pero no la confirma. El suelo y la
-                          humedad afectan la señal. El agua tranquila suele devolver poca
-                          energía, aunque el viento puede volverla más rugosa y cambiar el eco.
+                          <strong>{translate('Cómo se preparó:')}</strong>{' '}
+                          {translate('La capa muestra el término HVHV de frecuencia A del GCOV, como retrodispersión gamma-0 en decibelios. Un retorno HV relativamente alto puede ser compatible con dispersión dentro de vegetación, pero no la confirma. El suelo y la humedad afectan la señal. El agua tranquila suele devolver poca energía, aunque el viento puede volverla más rugosa y cambiar el eco.')}
                         </p>
                       </div>
                     </article>
@@ -1011,16 +925,16 @@ export const TourStepper: React.FC<TourStepperProps> = ({
           <section
             className="insar-comparison-dock"
             aria-label={isGcovComparisonEnabled || isLosGeometryComparisonEnabled
-              ? 'Controles de comparación'
-              : `Vista del mapa del módulo ${activeModule.title}`}
+              ? translate('Controles de comparación')
+              : translate('Vista del mapa del módulo {{title}}', { title: activeModule.title })}
           >
             <header className="insar-comparison-dock-header">
               <strong>
                 {isLosGeometryComparisonEnabled
-                  ? 'Comparación de geometrías LOS'
+                  ? translate('Comparación de geometrías LOS')
                   : isGcovComparisonEnabled
-                    ? 'Comparación de fechas'
-                    : `Vista del mapa · ${activeModule.title}`}
+                    ? translate('Comparación de fechas')
+                    : translate('Vista del mapa · {{title}}', { title: activeModule.title })}
               </strong>
               <button
                 type="button"
@@ -1029,8 +943,8 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                   setIsMapDockOpen(false)
                   setIsInsarGuideOpen(true)
                 }}
-                aria-label="Volver a abrir el módulo"
-                title="Volver a abrir el módulo"
+                aria-label={translate('Volver a abrir el módulo')}
+                title={translate('Volver a abrir el módulo')}
               >
                 ×
               </button>
@@ -1038,7 +952,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
             {isGcovComparisonEnabled ? (
               <>
                 <div className="insar-comparison-dock-controls">
-                  <label htmlFor="gcov-dock-polarization">Polarización</label>
+                  <label htmlFor="gcov-dock-polarization">{translate('Polarización')}</label>
                   <select
                     id="gcov-dock-polarization"
                     className="tour-radar-select"
@@ -1055,15 +969,15 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                     <option value="gcov_hv_before">HV</option>
                   </select>
                   <div className="gcov-comparison-dates">
-                    <span>Izquierda · 13 de junio de 2026</span>
-                    <span>Derecha · 17 de septiembre de 2026</span>
+                    <span>{translate('Izquierda · 13 de junio de 2026')}</span>
+                    <span>{translate('Derecha · 17 de septiembre de 2026')}</span>
                   </div>
                 </div>
               </>
             ) : isLosGeometryComparisonEnabled ? (
               <div className="insar-comparison-dock-geometry-labels">
-                <span>Ascendente · ±417 mm</span>
-                <span>Descendente · ±344 mm</span>
+                <span>{translate('Ascendente · ±417 mm')}</span>
+                <span>{translate('Descendente · ±344 mm')}</span>
               </div>
             ) : null}
             {(isGcovComparisonEnabled || isLosGeometryComparisonEnabled) && (
@@ -1075,7 +989,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                 step="0.01"
                 value={comparisonPosition}
                 onChange={(event) => onComparisonPositionChange(Number(event.currentTarget.value))}
-                aria-label="Mover la cortina de comparación en el mapa"
+                aria-label={translate('Mover la cortina de comparación en el mapa')}
               />
             )}
           </section>,

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import type { Earthquake } from '../data/earthquakes'
+import i18n, { translate } from '../i18n'
 import {
   FINITE_FAULT_GEOJSON_URL,
   parseFiniteFaultCollection,
@@ -77,7 +78,7 @@ export function EpicenterMap({ events }: Props) {
       }).addTo(map)
 
       const tooltip = document.createElement('span')
-      tooltip.textContent = `M${event.magnitude.toFixed(1)} · ${event.place}`
+      tooltip.textContent = `M${event.magnitude.toFixed(1)} · ${translate(event.place)}`
       marker.bindTooltip(tooltip, {
         permanent: true,
         direction: 'top',
@@ -124,7 +125,16 @@ export function EpicenterMap({ events }: Props) {
             const ruptureTime = properties?.trup
             if (typeof slip !== 'number' || typeof ruptureTime !== 'number') return
             layer.bindTooltip(
-              `Deslizamiento ${slip.toFixed(2)} m · inicio ${ruptureTime.toFixed(1)} s`,
+              translate('Deslizamiento {{slip}} m · inicio {{time}} s', {
+                slip: slip.toLocaleString(i18n.language.startsWith('en') ? 'en-US' : 'es-ES', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }),
+                time: ruptureTime.toLocaleString(i18n.language.startsWith('en') ? 'en-US' : 'es-ES', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                }),
+              }),
               { sticky: true, className: 'dash-epicenter-map__tooltip' },
             )
           },
@@ -148,7 +158,7 @@ export function EpicenterMap({ events }: Props) {
       } catch (error) {
         if (disposed) return
         console.error('Unable to load finite-fault layers for the dashboard map.', error)
-        setFiniteFaultError('No se pudieron cargar las capas de falla finita.')
+        setFiniteFaultError(translate('No se pudieron cargar las capas de falla finita.'))
       }
     }
 
@@ -234,7 +244,7 @@ export function EpicenterMap({ events }: Props) {
         <button
           className="dash-epicenter-map__backdrop"
           type="button"
-          aria-label="Cerrar mapa ampliado"
+          aria-label={translate('Cerrar mapa ampliado')}
           onClick={() => setIsExpanded(false)}
         />
       )}
@@ -243,9 +253,9 @@ export function EpicenterMap({ events }: Props) {
         className={`dash-epicenter-map${isExpanded ? ' is-expanded' : ''}`}
         role={isExpanded ? 'dialog' : undefined}
         aria-modal={isExpanded ? true : undefined}
-        aria-label={isExpanded ? 'Mapa ampliado de falla finita y epicentros' : undefined}
+        aria-label={isExpanded ? translate('Mapa ampliado de falla finita y epicentros') : undefined}
       >
-        <div className="dash-epicenter-map__layers" role="group" aria-label="Capas del modelo de falla finita">
+        <div className="dash-epicenter-map__layers" role="group" aria-label={translate('Capas del modelo de falla finita')}>
           <button
             className={showFaultModel ? 'is-active' : ''}
             type="button"
@@ -253,15 +263,15 @@ export function EpicenterMap({ events }: Props) {
             onClick={() => setShowFaultModel((visible) => !visible)}
           >
             <span className="dash-epicenter-map__layer-swatch dash-epicenter-map__layer-swatch--slip" aria-hidden="true" />
-            Falla finita · deslizamiento (m)
+            {translate('Falla finita · deslizamiento (m)')}
           </button>
         </div>
-        <div className="dash-epicenter-map__legend" aria-label="Leyenda de deslizamiento por subfalla">
-          <span>Deslizamiento por subfalla</span>
+        <div className="dash-epicenter-map__legend" aria-label={translate('Leyenda de deslizamiento por subfalla')}>
+          <span>{translate('Deslizamiento por subfalla')}</span>
           <div className="dash-epicenter-map__legend-scale dash-epicenter-map__legend-scale--slip" />
           <div className="dash-epicenter-map__legend-labels">
             <span>0 m</span>
-            <span>1,82 m</span>
+            <span>{i18n.language.startsWith('en') ? '1.82 m' : '1,82 m'}</span>
           </div>
         </div>
         {finiteFaultError && (
@@ -271,18 +281,18 @@ export function EpicenterMap({ events }: Props) {
           ref={expandButtonRef}
           className="dash-epicenter-map__expand"
           type="button"
-          aria-label={isExpanded ? 'Reducir mapa' : 'Ampliar mapa'}
-          title={isExpanded ? 'Reducir mapa' : 'Ampliar mapa'}
+          aria-label={translate(isExpanded ? 'Reducir mapa' : 'Ampliar mapa')}
+          title={translate(isExpanded ? 'Reducir mapa' : 'Ampliar mapa')}
           onClick={() => setIsExpanded((expanded) => !expanded)}
         >
           {isExpanded ? <Minimize2 size={16} aria-hidden="true" /> : <Maximize2 size={16} aria-hidden="true" />}
-          <span>{isExpanded ? 'Reducir' : 'Ampliar mapa'}</span>
+          <span>{translate(isExpanded ? 'Reducir' : 'Ampliar mapa')}</span>
         </button>
         <div
           className="dash-epicenter-map__viewport"
           ref={containerRef}
           role="application"
-          aria-label="Mapa OpenStreetMap con los epicentros y las capas del modelo de falla finita"
+          aria-label={translate('Mapa OpenStreetMap con los epicentros y las capas del modelo de falla finita')}
         />
       </div>
     </>

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { BlackHoleHeroSection } from './BlackHole'
 import StackLoader from './StackLoader'
+import { LanguageSelector } from './LanguageSelector'
+import { translate } from '../i18n'
 import './StartupLoader.css'
 
 type StartupLoaderProps = {
@@ -38,7 +40,7 @@ export function StartupLoader({
       className={`startup-loader${leaving ? ' startup-loader--leaving' : ''}`}
       role={hasStarted ? 'status' : undefined}
       aria-live={hasStarted ? 'polite' : undefined}
-      aria-label={hasStarted ? 'Cargando NISAR Earth in Motion' : undefined}
+      aria-label={hasStarted ? translate('Cargando NISAR Earth in Motion') : undefined}
       onTransitionEnd={(event) => {
         if (
           leaving
@@ -60,6 +62,7 @@ export function StartupLoader({
         />
       ) : (
         <div className="startup-loader__start-screen">
+          <LanguageSelector className="language-selector language-selector--startup" />
           <BlackHoleHeroSection
             className="startup-loader__blackhole"
             steps={180}
@@ -70,17 +73,16 @@ export function StartupLoader({
           />
           <div className="startup-loader__start-content">
             <h1 className="startup-loader__welcome-title">
-              Bienvenido a SismoView
+              {translate('Bienvenido a SismoView')}
             </h1>
             <p className="startup-loader__welcome-subtitle">
-              Caso de estudio: los terremotos de Venezuela
+              {translate('Caso de estudio: los terremotos de Venezuela')}
             </p>
             <p className="startup-loader__welcome-description">
-              Explora los epicentros y las observaciones satelitales de NISAR
-              en este recorrido interactivo.
+              {translate('Explora los epicentros y las observaciones satelitales de NISAR en este recorrido interactivo.')}
             </p>
             <p className="startup-loader__sound-prompt">
-              ¿Quieres activar el sonido para disfrutar la experiencia completa?
+              {translate('¿Quieres activar el sonido para disfrutar la experiencia completa?')}
             </p>
             <div className="startup-loader__start-actions">
               <button
@@ -88,14 +90,14 @@ export function StartupLoader({
                 type="button"
                 onClick={() => handleStart(false)}
               >
-                Continuar sin sonido
+                {translate('Continuar sin sonido')}
               </button>
               <button
                 className="startup-loader__start-button"
                 type="button"
                 onClick={() => handleStart(true)}
               >
-                Activar sonido
+                {translate('Activar sonido')}
               </button>
             </div>
           </div>

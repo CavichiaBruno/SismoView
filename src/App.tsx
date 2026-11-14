@@ -1,8 +1,10 @@
 import { lazy, Suspense, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StartupLoader } from './components/StartupLoader'
 import { EarthquakeDashboard } from './components/EarthquakeDashboard'
 import { ParallaxComponent } from './components/ui/parallax-scrolling'
 import { earthquakes } from './data/earthquakes'
+import { translate } from './i18n'
 import './App.css'
 
 const CesiumMap = lazy(async () => {
@@ -14,6 +16,7 @@ const CesiumMap = lazy(async () => {
 })
 
 function App() {
+  useTranslation()
   const [showStartupLoader, setShowStartupLoader] = useState(true)
   const [startupComplete, setStartupComplete] = useState(false)
   const [startupLoaderExited, setStartupLoaderExited] = useState(false)
@@ -22,7 +25,7 @@ function App() {
 
   const openDashboard = () => {
     const confirmed = window.confirm(
-      '¿Seguro que quieres ir directamente al dashboard y saltarte la experiencia interactiva?',
+      translate('¿Seguro que quieres ir directamente al dashboard y saltarte la experiencia interactiva?'),
     )
     if (confirmed) setScreen('dashboard')
   }
@@ -44,7 +47,7 @@ function App() {
               fallback={
                 <div className="map-provisioning-loader" role="status" aria-live="polite">
                   <span className="map-provisioning-loader__spinner" aria-hidden="true" />
-                  <span>Preparando experiencia interactiva</span>
+                  <span>{translate('Preparando experiencia interactiva')}</span>
                 </div>
               }
             >

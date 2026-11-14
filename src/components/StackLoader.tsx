@@ -14,6 +14,7 @@ import {
 } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/dist/SplitText";
+import { translate } from "../i18n";
 
 gsap.registerPlugin(SplitText);
 
@@ -418,7 +419,7 @@ const StackToSpreadIntro = forwardRef<HTMLElement, StackToSpreadIntroProps>(
                 width={1000}
                 height={1000}
                 className="h-full w-full object-cover"
-                alt={alt}
+                alt={translate(alt)}
               />
             </div>
           ))}
@@ -428,7 +429,7 @@ const StackToSpreadIntro = forwardRef<HTMLElement, StackToSpreadIntroProps>(
           ref={text2Ref}
           className="opacity-0 max-[1025px]:text-[2.8vw] max-md:text-[4vw]"
         >
-          presenta...
+          {translate("presenta...")}
         </p>
       </div>
 

@@ -4,6 +4,8 @@ import type { Earthquake } from '../data/earthquakes'
 import { MomentRateChart } from './MomentRateChart'
 import { MomentTensorChart } from './MomentTensorChart'
 import { NisarCoherenceChart } from './NisarCoherenceChart'
+import { EarthquakeMagnitudeChart } from './EarthquakeMagnitudeChart'
+import i18n, { translate } from '../i18n'
 import './EarthquakeDashboard.css'
 
 const CoverageQualityMap = lazy(() =>
@@ -85,7 +87,7 @@ function DeferredEpicenterMap({ events }: { events: Earthquake[] }) {
 
   const skeleton = (
     <div className="dash-coverage-skeleton" role="status">
-      <span>Cargando mapa de epicentros</span>
+      <span>{translate('Cargando mapa de epicentros')}</span>
     </div>
   )
 
@@ -106,8 +108,9 @@ export function EarthquakeDashboard({ events }: Props) {
     const coherence = EPICENTRAL_COHERENCE_BY_EVENT.get(event.id)
     return coherence === undefined ? [] : [{ event, coherence }]
   })
+  const locale = i18n.language.startsWith('en') ? 'en-US' : 'es-ES'
   const epicentralCoherenceValue = epicentralCoherenceEvents
-    .map(({ coherence }) => coherence.toLocaleString('es-ES', {
+    .map(({ coherence }) => coherence.toLocaleString(locale, {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3,
     }))
@@ -123,12 +126,12 @@ export function EarthquakeDashboard({ events }: Props) {
             <Satellite width={13} height={13} />
             NISAR · Venezuela 2026
           </span>
-          <h1>Informe InSAR del doblete sísmico</h1>
+          <h1>{translate('Informe InSAR del doblete sísmico')}</h1>
         </div>
 
         <div className="dash-header-status">
           <span className="dash-status-dot" />
-          <span>Datos NISAR procesados</span>
+          <span>{translate('Datos NISAR procesados')}</span>
         </div>
       </header>
 
@@ -140,30 +143,30 @@ export function EarthquakeDashboard({ events }: Props) {
           {magnitudeEvents.map((event) => (
             <KpiCard
               key={event.id}
-              label={`Magnitud · ${event.state}`}
+              label={translate('Magnitud · {{state}}', { state: event.state })}
               value={`M${event.magnitude.toFixed(1)}`}
-              detail={`${event.place} · Mw`}
+              detail={`${translate(event.place)} · Mw`}
             />
           ))}
           <KpiCard
-            label="Píxeles con señal aceptable"
-            value={OBSERVATION_METRICS.acceptedPixels}
-            detail={OBSERVATION_METRICS.acceptedPixelsDetail}
+            label={translate('Píxeles con señal aceptable')}
+            value={translate(OBSERVATION_METRICS.acceptedPixels)}
+            detail={translate(OBSERVATION_METRICS.acceptedPixelsDetail)}
           />
           <KpiCard
-            label="Coherencia mediana"
-            value={OBSERVATION_METRICS.acceptedCoherenceMedian}
-            detail={OBSERVATION_METRICS.acceptedCoherenceDetail}
+            label={translate('Coherencia mediana')}
+            value={translate(OBSERVATION_METRICS.acceptedCoherenceMedian)}
+            detail={translate(OBSERVATION_METRICS.acceptedCoherenceDetail)}
           />
           <KpiCard
-            label="Coherencia epicentral · 10 km"
+            label={translate('Coherencia epicentral · 10 km')}
             value={epicentralCoherenceValue}
-            detail={OBSERVATION_METRICS.epicentralCoherenceDetail}
+            detail={translate(OBSERVATION_METRICS.epicentralCoherenceDetail)}
           />
           <KpiCard
-            label="Intervalo de adquisición"
-            value={OBSERVATION_METRICS.temporalBaseline}
-            detail={OBSERVATION_METRICS.temporalBaselineDetail}
+            label={translate('Intervalo de adquisición')}
+            value={translate(OBSERVATION_METRICS.temporalBaseline)}
+            detail={translate(OBSERVATION_METRICS.temporalBaselineDetail)}
           />
         </div>
 
@@ -172,11 +175,11 @@ export function EarthquakeDashboard({ events }: Props) {
           <MomentRateChart />
           <NisarCoherenceChart events={epicentralCoherenceEvents} />
           <div className="dash-panel dash-quality-panel">
-            <span className="dash-section-title">Cobertura y calidad</span>
+            <span className="dash-section-title">{translate('Cobertura y calidad')}</span>
             <Suspense
               fallback={
                 <div className="dash-coverage-skeleton" role="status">
-                  <span>Preparando terreno y datos InSAR</span>
+                  <span>{translate('Preparando terreno y datos InSAR')}</span>
                 </div>
               }
             >
@@ -187,8 +190,9 @@ export function EarthquakeDashboard({ events }: Props) {
 
         <div className="dash-tensor-row">
           <MomentTensorChart />
+          <EarthquakeMagnitudeChart events={magnitudeEvents} />
           <div className="dash-panel dash-tensor-map">
-            <span className="dash-section-title">Falla finita y epicentros</span>
+            <span className="dash-section-title">{translate('Falla finita y epicentros')}</span>
             <DeferredEpicenterMap events={events} />
           </div>
         </div>

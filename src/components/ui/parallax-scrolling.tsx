@@ -7,6 +7,8 @@ import Lenis from 'lenis'
 import './parallax-scrolling.css'
 import { TiltedGridHero } from './tilted-grid-hero'
 import GlowButton from './glow-button'
+import { LanguageSelector } from '../LanguageSelector'
+import { translate } from '../../i18n'
 
 const observationImages = [
   {
@@ -242,6 +244,7 @@ export function ParallaxComponent({
 
   return (
     <div className="parallax" ref={parallaxRef}>
+      <LanguageSelector className="language-selector language-selector--parallax" />
       <div className="parallax__scroll-content">
         <section className="parallax__header" aria-label="Parallax introduction">
           <div className="parallax__visuals">
@@ -307,7 +310,10 @@ export function ParallaxComponent({
           </div>
         </section>
         <TiltedGridHero
-          images={observationImages}
+          images={observationImages.map((image) => ({
+            ...image,
+            alt: translate(image.alt),
+          }))}
           className="parallax__observations"
           axis={74}
           tileHeight={30}
@@ -321,14 +327,13 @@ export function ParallaxComponent({
           <div className="tilted-grid-hero__content">
             <div className="parallax__observations-copy">
               <p className="tilted-grid-hero__eyebrow">
-                NISAR · Observación de la Tierra
+                {translate('NISAR · Observación de la Tierra')}
               </p>
               <h2 className="tilted-grid-hero__title">
-                Cada señal revela el movimiento del terreno.
+                {translate('Cada señal revela el movimiento del terreno.')}
               </h2>
               <p className="tilted-grid-hero__caption">
-                Desplazamiento, fase y coherencia: distintas lecturas de una
-                misma superficie en transformación.
+                {translate('Desplazamiento, fase y coherencia: distintas lecturas de una misma superficie en transformación.')}
               </p>
               {(onStart || onOpenDashboard) && (
                 <div className="parallax__actions">
@@ -339,7 +344,7 @@ export function ParallaxComponent({
                       type="button"
                       colors={['#168cff', '#73ceff']}
                     >
-                      Iniciar recorrido
+                      {translate('Iniciar recorrido')}
                       <span aria-hidden="true">→</span>
                     </GlowButton>
                   )}
@@ -349,7 +354,7 @@ export function ParallaxComponent({
                       onClick={onOpenDashboard}
                       type="button"
                     >
-                      Ir al dashboard
+                      {translate('Ir al dashboard')}
                       <span aria-hidden="true">↗</span>
                     </button>
                   )}

@@ -25,6 +25,7 @@ import { faultOverlay } from '../data/faultGradients'
 import { fringeOverlay } from '../data/fringes'
 import { gcovOverlays } from '../data/gcov'
 import { terrainBlock } from '../data/terrainBlock'
+import { translate } from '../i18n'
 import './CoverageQualityMap.css'
 
 type SlideIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
@@ -415,7 +416,7 @@ export function CoverageQualityMap() {
     <div className="dash-quality-map">
       {loadError ? (
         <div className="dash-quality-map__error" role="status">
-          No se pudo cargar la vista de cobertura y calidad.
+          {translate('No se pudo cargar la vista de cobertura y calidad.')}
         </div>
       ) : (
         <div className={`dash-quality-map__frame${slide.right ? '' : ' dash-quality-map__frame--single'}`}>
@@ -424,24 +425,28 @@ export function CoverageQualityMap() {
             ref={containerRef}
             role="img"
             aria-label={slide.right
-              ? `Comparación 3D: ${slide.title}; ${slide.leftLabel} frente a ${slide.rightLabel}`
-              : `Capa 3D: ${slide.title}`}
+              ? translate('Comparación 3D: {{title}}; {{left}} frente a {{right}}', {
+                title: translate(slide.title),
+                left: translate(slide.leftLabel),
+                right: translate(slide.rightLabel ?? ''),
+              })
+              : translate('Capa 3D: {{title}}', { title: translate(slide.title) })}
           />
           <div
             className={`dash-quality-map__skeleton${isReady ? ' dash-quality-map__skeleton--hidden' : ''}`}
             role="status"
           >
-            <span>Preparando terreno y datos InSAR</span>
+            <span>{translate('Preparando terreno y datos InSAR')}</span>
           </div>
           <div className="dash-quality-map__legend">
             <span className="dash-quality-map__indicator" />
-            <span className="dash-quality-map__title" title={slide.title}>
-              {slide.title}
+            <span className="dash-quality-map__title" title={translate(slide.title)}>
+              {translate(slide.title)}
             </span>
-            <div className="dash-quality-map__navigation" role="group" aria-label="Capas y comparaciones">
+            <div className="dash-quality-map__navigation" role="group" aria-label={translate('Capas y comparaciones')}>
               <button
                 type="button"
-                aria-label="Capa anterior"
+                aria-label={translate('Capa anterior')}
                 disabled={!isReady}
                 onClick={() => selectSlideRef.current(
                   ((activeSlide + SLIDES.length - 1) % SLIDES.length) as SlideIndex,
@@ -451,7 +456,7 @@ export function CoverageQualityMap() {
               </button>
               <button
                 type="button"
-                aria-label="Siguiente capa"
+                aria-label={translate('Siguiente capa')}
                 disabled={!isReady}
                 onClick={() => selectSlideRef.current(
                   ((activeSlide + 1) % SLIDES.length) as SlideIndex,
@@ -463,8 +468,8 @@ export function CoverageQualityMap() {
             <span className="dash-quality-map__mode">3D · ×8</span>
           </div>
           <div className="dash-quality-map__dates" aria-hidden="true">
-            <span>{slide.leftLabel}</span>
-            {slide.rightLabel && <span>{slide.rightLabel}</span>}
+            <span>{translate(slide.leftLabel)}</span>
+            {slide.rightLabel && <span>{translate(slide.rightLabel)}</span>}
           </div>
           {slide.right && (
             <>
@@ -482,12 +487,12 @@ export function CoverageQualityMap() {
                 value={comparisonPosition * 100}
                 onChange={(event) => updateComparisonPosition(event.currentTarget.value)}
                 disabled={!isReady}
-                aria-label="Posición de la cortina para comparar las capas"
+                aria-label={translate('Posición de la cortina para comparar las capas')}
               />
             </>
           )}
-          <div className="dash-quality-map__note" title={slide.note}>
-            {slide.note}
+          <div className="dash-quality-map__note" title={translate(slide.note)}>
+            {translate(slide.note)}
           </div>
         </div>
       )}

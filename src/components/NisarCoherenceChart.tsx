@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Earthquake } from '../data/earthquakes'
+import i18n, { translate } from '../i18n'
 
 const PIE_RADIUS = 50
 const PIE_CIRCUMFERENCE = 2 * Math.PI * PIE_RADIUS
@@ -14,7 +15,7 @@ interface Props {
 }
 
 function formatCoherence(value: number) {
-  return value.toLocaleString('es-ES', {
+  return value.toLocaleString(i18n.language.startsWith('en') ? 'en-US' : 'es-ES', {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
   })
@@ -42,10 +43,10 @@ export function NisarCoherenceChart({ events }: Props) {
 
   return (
     <section className="dash-panel dash-coherence-panel" aria-labelledby="nisar-coherence-title">
-      <span className="dash-section-title">NISAR · Coherencia epicentral</span>
-      <h2 id="nisar-coherence-title">Señal radar cerca de cada sismo</h2>
+      <span className="dash-section-title">{translate('NISAR · Coherencia epicentral')}</span>
+      <h2 id="nisar-coherence-title">{translate('Señal radar cerca de cada sismo')}</h2>
       <p className="dash-coherence-subtitle">
-        Mediana de coherencia (γ) en un radio de 10 km · escala de 0 a 1
+        {translate('Mediana de coherencia (γ) en un radio de 10 km · escala de 0 a 1')}
       </p>
 
       <div className="dash-coherence-events">
@@ -58,7 +59,11 @@ export function NisarCoherenceChart({ events }: Props) {
               <div
                 className="dash-coherence-pie"
                 role="img"
-                aria-label={`M${event.magnitude.toFixed(1)} ${event.state}: coherencia mediana ${value}`}
+                aria-label={translate('M{{magnitude}} {{state}}: coherencia mediana {{value}}', {
+                  magnitude: event.magnitude.toFixed(1),
+                  state: event.state,
+                  value,
+                })}
               >
                 <svg viewBox="0 0 132 132" aria-hidden="true">
                   <circle
@@ -81,7 +86,7 @@ export function NisarCoherenceChart({ events }: Props) {
                   />
                 </svg>
                 <span className="dash-coherence-pie-value">{value}</span>
-                <span className="dash-coherence-pie-label">γ mediana</span>
+                <span className="dash-coherence-pie-label">{translate('γ mediana')}</span>
               </div>
               <div className="dash-coherence-event-copy">
                 <strong>M{event.magnitude.toFixed(1)} · {event.state}</strong>
@@ -93,12 +98,11 @@ export function NisarCoherenceChart({ events }: Props) {
       </div>
 
       <div className="dash-coherence-legend">
-        <span><i className="dash-coherence-legend-swatch is-coherence" />Coherencia medida</span>
-        <span><i className="dash-coherence-legend-swatch" />Margen hasta 1</span>
+        <span><i className="dash-coherence-legend-swatch is-coherence" />{translate('Coherencia medida')}</span>
+        <span><i className="dash-coherence-legend-swatch" />{translate('Margen hasta 1')}</span>
       </div>
       <p className="dash-coherence-note">
-        El sector oscuro solo completa la escala; no representa píxeles sin señal.
-        La coherencia mide consistencia radar, no desplazamiento.
+        {translate('El sector oscuro solo completa la escala; no representa píxeles sin señal. La coherencia mide consistencia radar, no desplazamiento.')}
       </p>
     </section>
   )

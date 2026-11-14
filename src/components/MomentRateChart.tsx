@@ -1,5 +1,6 @@
 import { Activity, RotateCcw } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
+import i18n, { translate } from '../i18n'
 
 const MOMENT_RATE = [
   0.0000, 0.0043, 0.0288, 0.0732, 0.1173, 0.1414, 0.1539, 0.1741,
@@ -84,6 +85,7 @@ export function MomentRateChart() {
   const [playback, setPlayback] = useState(0)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const clipId = useId().replace(/:/g, '')
+  const decimalSeparator = i18n.language.startsWith('en') ? '.' : ','
 
   useEffect(() => {
     const chart = chartRef.current
@@ -152,10 +154,10 @@ export function MomentRateChart() {
         <div>
           <span className="dash-section-title">
             <Activity width={14} height={14} />
-            USGS · Falla finita
+            {translate('USGS · Falla finita')}
           </span>
-          <h2 id="moment-rate-title">Tasa de liberación de momento</h2>
-          <p>24 jun 2026 · us6000t7zp</p>
+          <h2 id="moment-rate-title">{translate('Tasa de liberación de momento')}</h2>
+          <p>{i18n.language.startsWith('en') ? 'Jun 24, 2026' : '24 jun 2026'} · us6000t7zp</p>
         </div>
         <button
           className="dash-chart-replay"
@@ -165,10 +167,10 @@ export function MomentRateChart() {
             setActiveIndex(null)
             setPlayback((current) => current + 1)
           }}
-          aria-label="Repetir animación del gráfico"
+          aria-label={translate('Repetir animación del gráfico')}
         >
           <RotateCcw width={14} height={14} />
-          <span>Repetir</span>
+          <span>{translate('Repetir')}</span>
         </button>
       </div>
 
@@ -178,7 +180,7 @@ export function MomentRateChart() {
           className="dash-moment-svg"
           viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
           role="img"
-          aria-label="Tasa de momento sísmico relativa durante 117,4 segundos, con el final interpretado de la rotura a los 70 segundos"
+          aria-label={translate('Tasa de momento sísmico relativa durante 117,4 segundos, con el final interpretado de la rotura a los 70 segundos')}
           onPointerMove={handlePointer}
           onPointerDown={handlePointer}
           onPointerLeave={() => setActiveIndex(null)}
@@ -208,7 +210,7 @@ export function MomentRateChart() {
                 className="dash-moment-grid"
               />
               <text x={PLOT_LEFT - 14} y={chartY(rate) + 5} textAnchor="end" className="dash-moment-tick">
-                {rate.toFixed(2).replace('.', ',')}
+                {rate.toFixed(2).replace('.', decimalSeparator)}
               </text>
             </g>
           ))}
@@ -252,14 +254,14 @@ export function MomentRateChart() {
           />
 
           <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={CHART_HEIGHT - 8} textAnchor="middle" className="dash-moment-axis-label">
-            Tiempo desde el inicio (s)
+            {translate('Tiempo desde el inicio (s)')}
           </text>
           <text
             className="dash-moment-axis-label dash-moment-axis-label--y"
             transform={`translate(22 ${(PLOT_TOP + PLOT_BOTTOM) / 2}) rotate(-90)`}
             textAnchor="middle"
           >
-            Tasa relativa
+            {translate('Tasa relativa')}
           </text>
 
           {activeIndex !== null && activeTime !== null && activeRate !== null && activeX !== null && activeY !== null && tooltipX !== null && tooltipY !== null && (
@@ -269,10 +271,13 @@ export function MomentRateChart() {
               <g transform={`translate(${tooltipX} ${tooltipY})`}>
                 <rect x="-104" y="-58" width="208" height="48" rx="8" className="dash-moment-tooltip" />
                 <text y="-38" textAnchor="middle" className="dash-moment-tooltip-value">
-                  {activeTime.toFixed(1).replace('.', ',')} s · {(activeRate * 6.59).toFixed(2).replace('.', ',')} × 10¹⁸ Nm/s
+                  {activeTime.toFixed(1).replace('.', decimalSeparator)} s · {(activeRate * 6.59).toFixed(2).replace('.', decimalSeparator)} × 10¹⁸ Nm/s
                 </text>
                 <text y="-20" textAnchor="middle" className="dash-moment-tooltip-detail">
-                  Relativo {activeRate.toFixed(2).replace('.', ',')} · Acumulado {cumulativePercent} %
+                  {translate('Relativo {{rate}} · Acumulado {{percent}} %', {
+                    rate: activeRate.toFixed(2).replace('.', decimalSeparator),
+                    percent: cumulativePercent,
+                  })}
                 </text>
               </g>
             </g>
@@ -281,11 +286,11 @@ export function MomentRateChart() {
       </div>
 
       <div className="dash-moment-legend">
-        <span><i className="dash-moment-legend-line" /> Tasa de momento relativa</span>
-        <span><i className="dash-moment-legend-marker" /> Final interpretado de la rotura · 70 s</span>
+        <span><i className="dash-moment-legend-line" /> {translate('Tasa de momento relativa')}</span>
+        <span><i className="dash-moment-legend-marker" /> {translate('Final interpretado de la rotura · 70 s')}</span>
       </div>
       <p className="dash-moment-note">
-        Fuente: USGS. Curva normalizada del modelo; no es una medición directa.
+        {translate('Fuente: USGS. Curva normalizada del modelo; no es una medición directa.')}
       </p>
     </section>
   )

@@ -357,6 +357,58 @@
   container-type: inline-size;
 }
 
+.dash-magnitude-card {
+  grid-column: 2;
+  min-height: 390px;
+  gap: 7px;
+}
+
+.dash-magnitude-card h2 {
+  margin: -5px 0 0;
+  color: #f1f5f9;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.dash-magnitude-card > p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.dash-magnitude-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: auto 0;
+  overflow: visible;
+}
+
+.dash-magnitude-grid {
+  stroke: #5a87e1;
+  stroke-opacity: 0.2;
+  stroke-dasharray: 2 6;
+  stroke-width: 1;
+}
+
+.dash-magnitude-tick,
+.dash-magnitude-state {
+  fill: #94a3b8;
+  font-size: 12px;
+}
+
+.dash-magnitude-value {
+  fill: #f1f5f9;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-magnitude-bar {
+  fill: #38bdf8;
+  fill-opacity: 0.82;
+}
+
 .dash-tensor-heading {
   display: flex;
   align-items: flex-start;
@@ -778,6 +830,7 @@
   .dash-row-2 .dash-coherence-panel { grid-column: 1; }
   .dash-tensor-row { grid-template-columns: 1fr; }
   .dash-tensor-card,
+  .dash-magnitude-card,
   .dash-tensor-map,
   .dash-row-2 .dash-moment-card { grid-column: 1; }
   .dash-row-3 { grid-template-columns: 1fr; }

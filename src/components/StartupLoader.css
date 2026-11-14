@@ -20,6 +20,37 @@
   background: #030405;
 }
 
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font: 500 0.82rem/1.2 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.language-selector select {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgb(255 255 255 / 42%);
+  border-radius: 999px;
+  background: rgb(3 5 8 / 78%);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.language-selector select:focus-visible {
+  outline: 2px solid #73ceff;
+  outline-offset: 3px;
+}
+
+.language-selector--startup {
+  position: absolute;
+  z-index: 2;
+  top: max(1.25rem, env(safe-area-inset-top));
+  right: max(1.25rem, env(safe-area-inset-right));
+}
+
 .startup-loader__blackhole {
   position: absolute !important;
   z-index: 0;

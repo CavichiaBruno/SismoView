@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { PulsingBorderBackground } from './PulsingBorderBackground'
+import { translate } from '../i18n'
 import './TourTypingScreen.css'
 
 interface TourTypingScreenProps {
@@ -9,12 +10,12 @@ interface TourTypingScreenProps {
 }
 
 const NARRATIVE_PARAGRAPHS = [
-  '24 DE JUNIO DE 2026 · 14:04 VET (18:04 UTC)',
-  'Costa Centro-Norte y Cordillera de la Costa, Venezuela',
-  'En un intervalo de apenas 50 segundos, la tierra fue sacudida por un doblete sísmico histórico:',
-  '• 14:04 VET · San Felipe (Yaracuy) — Magnitud 7.2 Mw',
-  '• 14:05 VET · Catia La Mar (La Guaira) — Magnitud 7.5 Mw',
-  'A 747 km de altura, el radar de apertura sintética NISAR registró cada milímetro de desplazamiento en la corteza terrestre...',
+  translate('24 DE JUNIO DE 2026 · 14:04 VET (18:04 UTC)'),
+  translate('Costa Centro-Norte y Cordillera de la Costa, Venezuela'),
+  translate('En un intervalo de apenas 50 segundos, la tierra fue sacudida por un doblete sísmico histórico:'),
+  translate('• 14:04 VET · San Felipe (Yaracuy) — Magnitud 7.2 Mw'),
+  translate('• 14:05 VET · Catia La Mar (La Guaira) — Magnitud 7.5 Mw'),
+  translate('A 747 km de altura, el radar de apertura sintética NISAR registró cada milímetro de desplazamiento en la corteza terrestre...'),
 ]
 const AUTO_CONTINUE_DELAY = 6000
 const BETWEEN_LINES_DELAY = 350
@@ -235,7 +236,7 @@ export const TourTypingScreen: React.FC<TourTypingScreenProps> = ({
               style={{ animationDuration: `${AUTO_CONTINUE_DELAY}ms` }}
             />
           </svg>
-          <span>Auto-continuar</span>
+          <span>{translate('Auto-continuar')}</span>
         </div>
       )}
       <div className="typing-container">
@@ -265,7 +266,7 @@ export const TourTypingScreen: React.FC<TourTypingScreenProps> = ({
 
         <div className="typing-footer">
           <button className="skip-btn" onClick={handleSkip} type="button">
-            Saltar introducción <span aria-hidden="true">→</span>
+            {translate('Saltar introducción')} <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
