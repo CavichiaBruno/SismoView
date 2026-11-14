@@ -1,0 +1,332 @@
+.parallax {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #07090c;
+  color: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  scrollbar-width: none;
+}
+
+.parallax::-webkit-scrollbar {
+  display: none;
+}
+
+.parallax__scroll-content {
+  position: relative;
+}
+
+.parallax__header,
+.parallax__observations {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.parallax__header {
+  overflow: hidden;
+}
+
+.parallax__visuals,
+.parallax__layers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.parallax__visuals {
+  background: #243941;
+}
+
+.parallax__layers {
+  perspective: 1px;
+}
+
+.parallax__layers.is-camera-shaking {
+  animation: camera-shake 4.5s ease-out both;
+}
+
+@keyframes camera-shake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  8% {
+    transform: translate3d(-2px, 1px, 0) rotate(-0.08deg);
+  }
+  16% {
+    transform: translate3d(2px, -1px, 0) rotate(0.08deg);
+  }
+  24% {
+    transform: translate3d(-1.5px, 1px, 0) rotate(-0.05deg);
+  }
+  32% {
+    transform: translate3d(1px, 0, 0) rotate(0.04deg);
+  }
+  44% {
+    transform: translate3d(-0.5px, 0, 0) rotate(-0.02deg);
+  }
+  56% {
+    transform: translate3d(0.8px, 0, 0) rotate(0.02deg);
+  }
+  68% {
+    transform: translate3d(-0.6px, 0, 0) rotate(-0.01deg);
+  }
+  80% {
+    transform: translate3d(0.4px, 0, 0);
+  }
+  92% {
+    transform: translate3d(-0.2px, 0, 0);
+  }
+}
+
+.parallax__layer-img {
+  position: absolute;
+  inset: -10% 0 0;
+  display: block;
+  width: 100%;
+  height: 110%;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.parallax__layer-img[data-parallax-layer="1"] {
+  object-position: center 68%;
+}
+
+.parallax__layer-img[data-parallax-layer="2"] {
+  object-position: center 78%;
+}
+
+.parallax__layer-img[data-parallax-layer="4"] {
+  object-position: center 72%;
+}
+
+.parallax__layer-title {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 1rem;
+}
+
+.parallax__title {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  margin: -2vh 0 0;
+  color: #fff;
+  font-size: clamp(5.5rem, 15vw, 15rem);
+  font-weight: 900;
+  letter-spacing: 0.025em;
+  line-height: 0.82;
+  text-align: center;
+  text-shadow:
+    0 3px 28px rgb(0 0 0 / 24%),
+    0 16px 70px rgb(0 0 0 / 32%);
+  background-image: radial-gradient(
+    circle at 50% 100%,
+    #fff calc((var(--sismo-wave-offset, -25) + 0) * 1%),
+    #d9b06a calc((var(--sismo-wave-offset, -25) + 8) * 1%),
+    #6fb3c2 calc((var(--sismo-wave-offset, -25) + 12) * 1%),
+    #e07a5f calc((var(--sismo-wave-offset, -25) + 16) * 1%),
+    #81b29a calc((var(--sismo-wave-offset, -25) + 20) * 1%),
+    #f2cc8f calc((var(--sismo-wave-offset, -25) + 24) * 1%),
+    #8d7fc9 calc((var(--sismo-wave-offset, -25) + 28) * 1%),
+    #fff calc((var(--sismo-wave-offset, -25) + 32) * 1%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.parallax__title-crack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.parallax__title.is-wave-animating {
+  animation: sismo-wave-text 3.75s ease-out 0.35s both;
+}
+
+@property --sismo-wave-offset {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: -25;
+}
+
+@keyframes sismo-wave-text {
+  from {
+    --sismo-wave-offset: -25;
+  }
+  to {
+    --sismo-wave-offset: 100;
+  }
+}
+
+.parallax__black-line-overflow {
+  position: absolute;
+  z-index: 2;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #07090c;
+}
+
+.parallax__fade {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0;
+  height: 24%;
+  background: linear-gradient(transparent, rgb(7 9 12 / 70%));
+  pointer-events: none;
+}
+
+.parallax__actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 1.75rem;
+  pointer-events: auto;
+}
+
+.parallax__content-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 54%);
+  border-radius: 999px;
+  background: rgb(9 14 18 / 42%);
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+  backdrop-filter: blur(12px);
+}
+
+.parallax__content-button:hover {
+  transform: translateY(-2px);
+  border-color: #fff;
+  background: rgb(255 255 255 / 18%);
+}
+
+.parallax__content-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.parallax__content-button {
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  padding: 0.9rem 1.4rem;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.parallax__content-button--secondary {
+  border-color: rgb(255 255 255 / 28%);
+  background: rgb(9 14 18 / 25%);
+  color: rgb(255 255 255 / 76%);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.82rem 1.2rem;
+}
+
+.parallax__content-button--primary.glow-btn {
+  border-color: rgb(112 198 255 / 90%);
+  background: linear-gradient(135deg, rgb(9 50 80 / 96%), rgb(7 20 34 / 94%));
+  box-shadow:
+    0 0 0 1px rgb(73 174 255 / 20%),
+    0 0 18px rgb(46 153 255 / 48%),
+    inset 0 0 18px rgb(57 159 255 / 16%);
+  font-size: 0.95rem;
+  font-weight: 750;
+  padding: 1.05rem 1.75rem;
+}
+
+.parallax__content-button--primary.glow-btn:hover {
+  border-color: #b7e4ff;
+  background: linear-gradient(135deg, rgb(13 66 105 / 98%), rgb(8 29 49 / 96%));
+  box-shadow:
+    0 0 0 1px rgb(112 198 255 / 42%),
+    0 0 28px rgb(46 153 255 / 72%),
+    inset 0 0 20px rgb(57 159 255 / 24%);
+}
+
+.parallax__content-button span {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.parallax__observations-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 62rem;
+}
+
+.parallax__team-logo {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1.25rem, 3vw, 2.5rem);
+  right: clamp(1.25rem, 3vw, 2.5rem);
+  width: clamp(8rem, 15vw, 13rem);
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .parallax__title {
+    font-size: clamp(2.5rem, 14vw, 6.5rem);
+    letter-spacing: 0.015em;
+  }
+
+  .parallax__team-logo {
+    width: clamp(6.5rem, 30vw, 9rem);
+  }
+
+  .parallax__layer-img[data-parallax-layer="4"] {
+    object-position: 54% 72%;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax__title.is-wave-animating {
+    animation: none;
+    --sismo-wave-offset: -25;
+  }
+
+  .parallax__layers.is-camera-shaking {
+    animation: none;
+  }
+
+  .parallax__content-button {
+    transition: none;
+  }
+
+}

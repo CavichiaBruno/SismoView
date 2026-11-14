@@ -1,0 +1,50 @@
+.waveform__bars {
+  height: 52px;
+}
+
+.waveform__bar {
+  transform-origin: center bottom;
+}
+
+.waveform__bar:not(.waveform__bar--playing) {
+  opacity: 0.2;
+}
+
+[data-slot="tron-waveform"][data-size="large"] {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+[data-slot="tron-waveform"][data-size="large"] .waveform__bars {
+  height: clamp(12rem, 42vh, 28rem);
+  gap: clamp(3px, 0.6vw, 8px);
+}
+
+[data-slot="tron-waveform"][data-size="large"] .waveform__bar {
+  width: clamp(0.4rem, 1.15vw, 1rem);
+}
+
+[data-slot="tron-waveform"][data-size="large"] .waveform__bar--playing {
+  animation: waveform-pulse 900ms ease-in-out infinite alternate;
+}
+
+[data-slot="tron-waveform"][data-size="large"] .waveform__bar--playing {
+  opacity: 0.88;
+}
+
+@keyframes waveform-pulse {
+  from {
+    transform: scaleY(0.28);
+    filter: brightness(0.8);
+  }
+
+  to {
+    transform: scaleY(1);
+    filter: brightness(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="tron-waveform"][data-size="large"] .waveform__bar--playing {
+    animation: none;
+  }
+}
