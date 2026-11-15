@@ -2284,6 +2284,7 @@ export function CesiumMap({
       {tourStep === 'typing' && (
         <TourTypingScreen
           introSoundEnabled={introSoundEnabled}
+          userHasInteracted={userHasInteracted}
           onSkip={() => {
             startProvisioning()
             goToStep('nisar_intro')

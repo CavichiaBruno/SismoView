@@ -7,6 +7,7 @@ interface TourTypingScreenProps {
   onComplete: () => void
   onSkip?: () => void
   introSoundEnabled?: boolean
+  userHasInteracted?: boolean
 }
 
 const NARRATIVE_PARAGRAPHS = [
@@ -107,6 +108,7 @@ export const TourTypingScreen: React.FC<TourTypingScreenProps> = ({
   onComplete,
   onSkip,
   introSoundEnabled = false,
+  userHasInteracted = false,
 }) => {
   const [currentFrameIndex, setCurrentFrameIndex] = useState(-1)
   const [isFadingOut, setIsFadingOut] = useState(false)
@@ -119,7 +121,7 @@ export const TourTypingScreen: React.FC<TourTypingScreenProps> = ({
     ?? (currentFrameIndex < 0 ? 0 : NARRATIVE_PARAGRAPHS.length)
 
   useEffect(() => {
-    if (!introSoundEnabled) return
+    if (!introSoundEnabled || !userHasInteracted) return
 
     const audio = new Audio('/sounds/minimalist-text-typing.wav')
     audio.volume = 0
@@ -131,27 +133,38 @@ export const TourTypingScreen: React.FC<TourTypingScreenProps> = ({
     ambience.loop = true
     ambienceAudioRef.current = ambience
 
-    void audio.play().catch((error: unknown) => {
-      console.warn('No se pudo reproducir el audio del texto tipeado.', error)
+    const playPromises = [
+      audio.play().catch((error: unknown) => {
+        if ((error as any)?.name !== 'AbortError') {
+          console.warn('No se pudo reproducir el audio del texto tipeado.', error)
+        }
+      }),
+      ambience.play().catch((error: unknown) => {
+        if ((error as any)?.name !== 'AbortError') {
+          console.warn('No se pudo reproducir el ambiente del texto tipeado.', error)
+        }
+      }),
+    ]
+
+    void Promise.all(playPromises).then(() => {
+      fadeAudio(audio, TYPING_AUDIO_VOLUME)
+      fadeAudio(ambience, AMBIENCE_AUDIO_VOLUME)
     })
-    void ambience.play().catch((error: unknown) => {
-      console.warn('No se pudo reproducir el ambiente del texto tipeado.', error)
-    })
-    fadeAudio(audio, TYPING_AUDIO_VOLUME)
-    fadeAudio(ambience, AMBIENCE_AUDIO_VOLUME)
 
     return () => {
       for (const track of [audio, ambience]) {
         const frame = audioFadeFrames.get(track)
         if (frame !== undefined) cancelAnimationFrame(frame)
         audioFadeFrames.delete(track)
-        track.pause()
+        if (!track.paused) {
+          track.pause()
+        }
         track.currentTime = 0
       }
       introAudioRef.current = null
       ambienceAudioRef.current = null
     }
-  }, [introSoundEnabled])
+  }, [introSoundEnabled, userHasInteracted])
 
   useEffect(() => {
     if (currentLineIndex >= NARRATIVE_PARAGRAPHS.length) {
