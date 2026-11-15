@@ -415,6 +415,7 @@ export function CesiumMap({
   const [isVoiceIntroClosing, setIsVoiceIntroClosing] = useState(false)
   const [isVoiceIntroComplete, setIsVoiceIntroComplete] = useState(false)
   const [voiceSubtitleIndex, setVoiceSubtitleIndex] = useState(-1)
+  const [userHasInteracted, setUserHasInteracted] = useState(false)
   const isVoiceIntroPlayingRef = useRef(false)
   const isMapActive =
     tourStep !== 'wall'
@@ -444,49 +445,48 @@ export function CesiumMap({
   }, [isProvisioning])
 
   useEffect(() => {
-    const createAudio = (src: string): HTMLAudioElement | null => {
-      try {
-        const audio = new Audio(src)
-        audio.crossOrigin = 'anonymous'
-        audio.preload = 'auto'
-        return audio
-      } catch (error) {
-        console.warn(`Failed to create audio element for ${src}:`, error)
-        return null
-      }
+    if (userHasInteracted) return
+
+    const handleUserInteraction = () => {
+      setUserHasInteracted(true)
     }
 
-    const mainThemeAudio = createAudio('/sounds/main-theme.wav')
-    const epicentersAudio = createAudio('/sounds/view-epicentres.mp3')
-    const voiceIntroAudio = createAudio('/sounds/voice-intro.wav')
+    const events = ['click', 'touchstart', 'keydown', 'pointerdown']
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true })
+    })
 
-    if (mainThemeAudio) {
-      mainThemeAudio.loop = true
-      mainThemeAudio.volume = 0
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction)
+      })
     }
-    if (epicentersAudio) {
-      epicentersAudio.loop = true
-      epicentersAudio.volume = 0
-    }
-    if (voiceIntroAudio) {
-      voiceIntroAudio.volume = 0
-    }
+  }, [userHasInteracted])
 
+  useEffect(() => {
+    const mainThemeAudio = new Audio('/sounds/main-theme.wav')
+    const epicentersAudio = new Audio('/sounds/view-epicentres.mp3')
+    const voiceIntroAudio = new Audio('/sounds/voice-intro.wav')
+    
+    mainThemeAudio.loop = true
+    epicentersAudio.loop = true
+    mainThemeAudio.volume = 0
+    epicentersAudio.volume = 0
+    voiceIntroAudio.volume = 0
+    
+    mainThemeAudio.addEventListener('canplay', () => console.log('main-theme audio ready'))
+    epicentersAudio.addEventListener('canplay', () => console.log('epicentres audio ready'))
+    voiceIntroAudio.addEventListener('canplay', () => console.log('voice-intro audio ready'))
+    
     mainThemeAudioRef.current = mainThemeAudio
     epicentersAudioRef.current = epicentersAudio
     voiceIntroAudioRef.current = voiceIntroAudio
 
     return () => {
       for (const audio of [mainThemeAudio, epicentersAudio, voiceIntroAudio]) {
-        if (audio) {
-          try {
-            cancelAudioFade(audio)
-            audio.pause()
-            audio.currentTime = 0
-          } catch {
-            // Ignore cleanup errors
-          }
-        }
+        cancelAudioFade(audio)
+        audio.pause()
+        audio.currentTime = 0
       }
       mainThemeAudioRef.current = null
       epicentersAudioRef.current = null
@@ -522,17 +522,19 @@ export function CesiumMap({
     audio.currentTime = 0
     audio.volume = 0
     audio.addEventListener('ended', finishVoiceIntro, { once: true })
-    void audio.play().then(() => {
-      if (!cancelled) {
-        fadeAudio(audio, VOICE_INTRO_VOLUME, undefined, VOICE_INTRO_FADE_DURATION)
-      }
-    }).catch((error: unknown) => {
-      // Silently handle autoplay errors - audio might be blocked by browser policy
-      if ((error as any)?.name !== 'NotAllowedError' && (error as any)?.name !== 'NotSupportedError') {
-        console.warn('No se pudo reproducir la grabación de voz.', error)
-      }
-      finishVoiceIntro()
-    })
+    
+    if (userHasInteracted) {
+      void audio.play().then(() => {
+        if (!cancelled) {
+          fadeAudio(audio, VOICE_INTRO_VOLUME, undefined, VOICE_INTRO_FADE_DURATION)
+        }
+      }).catch((error: unknown) => {
+        console.error('Failed to play voice intro:', error)
+        finishVoiceIntro()
+      })
+    } else {
+      console.log('Waiting for user interaction to play voice intro')
+    }
 
     return () => {
       cancelled = true
@@ -546,7 +548,7 @@ export function CesiumMap({
       setIsVoiceIntroClosing(false)
       setIsVoiceIntroComplete(false)
     }
-  }, [isProvisioning, isProvisioningLeaving, startupComplete, tourStep])
+  }, [isProvisioning, isProvisioningLeaving, startupComplete, tourStep, userHasInteracted])
 
   useEffect(() => {
     if (!isVoiceIntroPlaying) {
@@ -593,12 +595,11 @@ export function CesiumMap({
       if (shouldPlay) {
         if (audio.paused) {
           audio.volume = 0
-          void audio.play().catch((error: unknown) => {
-            // Silently handle autoplay errors
-            if ((error as any)?.name !== 'NotAllowedError' && (error as any)?.name !== 'NotSupportedError') {
-              console.warn('No se pudo reproducir la música de la experiencia.', error)
-            }
-          })
+          if (userHasInteracted) {
+            void audio.play().catch((error: unknown) => {
+              console.error('Failed to play music:', error)
+            })
+          }
         }
         fadeAudio(audio, MUSIC_VOLUME)
         return
@@ -620,7 +621,7 @@ export function CesiumMap({
 
     transitionAudio(mainThemeAudio, shouldPlayMainTheme)
     transitionAudio(epicentersAudio, isEpicentersStep, true)
-  }, [isMapActive, isVoiceIntroPlaying, tourStep])
+  }, [isMapActive, isVoiceIntroPlaying, tourStep, userHasInteracted])
 
   // Motion refs to avoid re-renders during 60 FPS animation loops
   const radarLayerRef = useRef<RadarLayer>('fringes')
