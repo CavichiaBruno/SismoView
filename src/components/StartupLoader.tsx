@@ -30,6 +30,20 @@ export function StartupLoader({
     if (enableSound) {
       const audio = new Audio('/sounds/typing.mp3')
       audio.volume = 0.2
+      // Play (and immediately pause) synchronously inside this click handler.
+      // This is a real user gesture, so it unlocks audio autoplay for the
+      // whole page (Safari/iOS in particular) — every later audio.play()
+      // call elsewhere in the app (map, typing screen, etc.) then just
+      // honors the choice made here, with no extra click required.
+      void audio
+        .play()
+        .then(() => {
+          audio.pause()
+          audio.currentTime = 0
+        })
+        .catch(() => {
+          // Ignore — if this fails, later play() attempts will retry anyway.
+        })
       setTypingAudio(audio)
     }
     setHasStarted(true)
