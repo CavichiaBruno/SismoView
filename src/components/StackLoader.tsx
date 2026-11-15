@@ -110,26 +110,37 @@ const StackToSpreadIntro = forwardRef<HTMLElement, StackToSpreadIntroProps>(
     const typingAudio = providedTypingAudio === undefined
       ? new Audio("/sounds/typing.mp3")
       : providedTypingAudio;
-    if (typingAudio) typingAudio.volume = 0.2;
+    if (typingAudio) {
+      typingAudio.volume = 0.2;
+      typingAudio.crossOrigin = "anonymous";
+      typingAudio.preload = "auto";
+    }
     let hasAnimationCompleted = false;
 
     const playTypingAudio = () => {
-      if (!typingAudio) return;
+      if (!typingAudio || typingAudio.paused === false) return;
       typingAudio.currentTime = 0;
-      void typingAudio.play().then(() => {
+      void typingAudio.play().catch((error: unknown) => {
+        // Silently fail - audio might be blocked by browser policy
+        if ((error as any)?.name !== "NotAllowedError") {
+          console.warn("No se pudo reproducir el sonido del loader.", error);
+        }
+      }).then(() => {
         if (hasAnimationCompleted) {
           typingAudio.pause();
           typingAudio.currentTime = 0;
         }
-      }).catch((error: unknown) => {
-        console.warn("No se pudo reproducir el sonido del loader.", error);
       });
     };
 
     const stopTypingAudio = () => {
       hasAnimationCompleted = true;
-      typingAudio?.pause();
-      if (typingAudio) typingAudio.currentTime = 0;
+      try {
+        typingAudio?.pause();
+        if (typingAudio) typingAudio.currentTime = 0;
+      } catch {
+        // Ignore errors
+      }
     };
 
     // Reduced-motion: images already in a vertical line - smooth opacity only.

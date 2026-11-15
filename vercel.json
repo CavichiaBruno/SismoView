@@ -8,6 +8,12 @@
       "outputDirectory": "dist"
     }
   },
+  "env": [
+    {
+      "key": "VITE_CESIUM_ION_TOKEN",
+      "description": "Cesium Ion access token for map tiles and imagery"
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

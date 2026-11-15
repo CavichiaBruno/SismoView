@@ -70,6 +70,7 @@ import { TourTypingScreen } from './TourTypingScreen'
 import { TourStepper } from './TourStepper'
 import { EarthquakeDashboard } from './EarthquakeDashboard'
 import { Waveform } from './ui/waveform'
+import { optimizeCesiumTileCache, prewarmTileCache, clearExpiredTiles } from '../utils/cesiumOptimizations'
 import i18n, { translate } from '../i18n'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
@@ -443,23 +444,49 @@ export function CesiumMap({
   }, [isProvisioning])
 
   useEffect(() => {
-    const mainThemeAudio = new Audio('/sounds/main-theme.wav')
-    const epicentersAudio = new Audio('/sounds/view-epicentres.mp3')
-    const voiceIntroAudio = new Audio('/sounds/voice-intro.wav')
-    mainThemeAudio.loop = true
-    epicentersAudio.loop = true
-    mainThemeAudio.volume = 0
-    epicentersAudio.volume = 0
-    voiceIntroAudio.volume = 0
+    const createAudio = (src: string): HTMLAudioElement | null => {
+      try {
+        const audio = new Audio(src)
+        audio.crossOrigin = 'anonymous'
+        audio.preload = 'auto'
+        return audio
+      } catch (error) {
+        console.warn(`Failed to create audio element for ${src}:`, error)
+        return null
+      }
+    }
+
+    const mainThemeAudio = createAudio('/sounds/main-theme.wav')
+    const epicentersAudio = createAudio('/sounds/view-epicentres.mp3')
+    const voiceIntroAudio = createAudio('/sounds/voice-intro.wav')
+
+    if (mainThemeAudio) {
+      mainThemeAudio.loop = true
+      mainThemeAudio.volume = 0
+    }
+    if (epicentersAudio) {
+      epicentersAudio.loop = true
+      epicentersAudio.volume = 0
+    }
+    if (voiceIntroAudio) {
+      voiceIntroAudio.volume = 0
+    }
+
     mainThemeAudioRef.current = mainThemeAudio
     epicentersAudioRef.current = epicentersAudio
     voiceIntroAudioRef.current = voiceIntroAudio
 
     return () => {
       for (const audio of [mainThemeAudio, epicentersAudio, voiceIntroAudio]) {
-        cancelAudioFade(audio)
-        audio.pause()
-        audio.currentTime = 0
+        if (audio) {
+          try {
+            cancelAudioFade(audio)
+            audio.pause()
+            audio.currentTime = 0
+          } catch {
+            // Ignore cleanup errors
+          }
+        }
       }
       mainThemeAudioRef.current = null
       epicentersAudioRef.current = null
@@ -500,7 +527,10 @@ export function CesiumMap({
         fadeAudio(audio, VOICE_INTRO_VOLUME, undefined, VOICE_INTRO_FADE_DURATION)
       }
     }).catch((error: unknown) => {
-      console.warn('No se pudo reproducir la grabación de voz.', error)
+      // Silently handle autoplay errors - audio might be blocked by browser policy
+      if ((error as any)?.name !== 'NotAllowedError' && (error as any)?.name !== 'NotSupportedError') {
+        console.warn('No se pudo reproducir la grabación de voz.', error)
+      }
       finishVoiceIntro()
     })
 
@@ -564,7 +594,10 @@ export function CesiumMap({
         if (audio.paused) {
           audio.volume = 0
           void audio.play().catch((error: unknown) => {
-            console.warn('No se pudo reproducir la música de la experiencia.', error)
+            // Silently handle autoplay errors
+            if ((error as any)?.name !== 'NotAllowedError' && (error as any)?.name !== 'NotSupportedError') {
+              console.warn('No se pudo reproducir la música de la experiencia.', error)
+            }
           })
         }
         fadeAudio(audio, MUSIC_VOLUME)
@@ -1346,8 +1379,16 @@ export function CesiumMap({
     viewer.scene.backgroundColor = Color.fromCssColorString('#040609')
     viewer.scene.globe.depthTestAgainstTerrain = true
     viewer.scene.globe.maximumScreenSpaceError = 3
-    viewer.scene.globe.tileCacheSize = 150
     viewer.scene.globe.loadingDescendantLimit = 10
+
+    // Optimize tile caching for better performance
+    optimizeCesiumTileCache(viewer, 512)
+    
+    // Clear expired tiles from cache asynchronously
+    void clearExpiredTiles()
+    
+    // Pre-warm tile cache for Venezuela region (10°N, -66°W)
+    void prewarmTileCache(viewer, -66, 10)
 
     const cameraController = viewer.scene.screenSpaceCameraController
     cameraController.enableCollisionDetection = true
