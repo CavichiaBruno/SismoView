@@ -28,22 +28,26 @@ export function StartupLoader({
   const handleStart = (enableSound: boolean) => {
     onSoundPreferenceChange(enableSound)
     if (enableSound) {
-      const audio = new Audio('/sounds/typing.mp3')
-      audio.volume = 0.2
-      // Play (and immediately pause) synchronously inside this click handler.
-      // This is a real user gesture, so it unlocks audio autoplay for the
-      // whole page (Safari/iOS in particular) — every later audio.play()
-      // call elsewhere in the app (map, typing screen, etc.) then just
-      // honors the choice made here, with no extra click required.
-      void audio
+      // Use a throwaway audio element just to unlock autoplay (Safari/iOS in
+      // particular) with this user gesture. This must be a *separate*
+      // instance from the one handed to the StackLoader below: if we reused
+      // the same element, this unlock's play()/pause() promise can resolve
+      // after the StackLoader has already started real playback, silencing
+      // it the moment it begins.
+      const unlockAudio = new Audio('/sounds/typing.mp3')
+      unlockAudio.volume = 0
+      void unlockAudio
         .play()
         .then(() => {
-          audio.pause()
-          audio.currentTime = 0
+          unlockAudio.pause()
+          unlockAudio.currentTime = 0
         })
         .catch(() => {
           // Ignore — if this fails, later play() attempts will retry anyway.
         })
+
+      const audio = new Audio('/sounds/typing.mp3')
+      audio.volume = 0.2
       setTypingAudio(audio)
     }
     setHasStarted(true)

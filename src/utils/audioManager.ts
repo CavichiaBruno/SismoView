@@ -101,18 +101,22 @@ export function fadeAudio(
 ): Promise<void> {
   return new Promise((resolve) => {
     const startVolume = audio.volume;
+    const clampedTargetVolume = Math.max(0, Math.min(1, targetVolume));
     const startTime = Date.now();
 
     const animate = () => {
       const now = Date.now();
-      const progress = Math.min(1, (now - startTime) / duration);
+      const progress = Math.max(0, Math.min(1, (now - startTime) / duration));
 
-      audio.volume = startVolume + (targetVolume - startVolume) * progress;
+      audio.volume = Math.max(
+        0,
+        Math.min(1, startVolume + (clampedTargetVolume - startVolume) * progress),
+      );
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        audio.volume = targetVolume;
+        audio.volume = clampedTargetVolume;
         resolve();
       }
     };

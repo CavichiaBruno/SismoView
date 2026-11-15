@@ -35,17 +35,21 @@ function fadeAudio(
   if (previousFrame !== undefined) cancelAnimationFrame(previousFrame)
 
   const startVolume = audio.volume
+  const clampedTargetVolume = Math.max(0, Math.min(1, targetVolume))
   const startedAt = performance.now()
   const animate = (now: number) => {
-    const progress = Math.min((now - startedAt) / AUDIO_FADE_DURATION, 1)
-    audio.volume = startVolume + (targetVolume - startVolume) * progress
+    const progress = Math.max(0, Math.min((now - startedAt) / AUDIO_FADE_DURATION, 1))
+    audio.volume = Math.max(
+      0,
+      Math.min(1, startVolume + (clampedTargetVolume - startVolume) * progress),
+    )
 
     if (progress < 1) {
       audioFadeFrames.set(audio, requestAnimationFrame(animate))
       return
     }
 
-    audio.volume = targetVolume
+    audio.volume = clampedTargetVolume
     audioFadeFrames.delete(audio)
     onComplete?.()
   }

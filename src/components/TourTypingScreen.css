@@ -180,8 +180,9 @@
     -webkit-overflow-scrolling: touch;
     padding:
       max(4.25rem, calc(env(safe-area-inset-top) + 3.25rem))
-      1rem
-      max(1.5rem, env(safe-area-inset-bottom));
+      max(1.75rem, calc(env(safe-area-inset-left) + 1.5rem))
+      max(1.5rem, env(safe-area-inset-bottom))
+      max(1.75rem, calc(env(safe-area-inset-right) + 1.5rem));
   }
 
   .auto-continue {
@@ -191,7 +192,8 @@
 
   .typing-container {
     flex: 0 0 auto;
-    max-width: 36rem;
+    max-width: 32rem;
+    width: 100%;
     margin: auto;
   }
 
@@ -202,21 +204,24 @@
 
   .typing-line {
     width: 100%;
-    max-width: 38ch;
+    max-width: 32ch;
+    margin-inline: auto;
     overflow-wrap: anywhere;
-    font-size: clamp(0.95rem, 4vw, 1.05rem);
+    font-size: clamp(0.9rem, 4vw, 1rem);
     line-height: 1.38;
     letter-spacing: -0.02em;
   }
 
   .typing-line.time-stamp {
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
+    max-width: 100%;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
   }
 
   .typing-line.epicenter-highlight {
-    font-size: clamp(1.15rem, 5.8vw, 1.6rem);
-    line-height: 1.2;
+    max-width: 100%;
+    font-size: clamp(1.05rem, 5.2vw, 1.4rem);
+    line-height: 1.22;
   }
 
   .typing-footer {

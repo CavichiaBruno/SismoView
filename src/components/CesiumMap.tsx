@@ -209,18 +209,23 @@ function fadeAudio(
 ) {
   cancelAudioFade(audio)
   const startVolume = audio.volume
+  const clampedTargetVolume = CesiumMath.clamp(targetVolume, 0, 1)
   const startedAt = performance.now()
 
   const animate = (now: number) => {
-    const progress = Math.min((now - startedAt) / duration, 1)
-    audio.volume = startVolume + (targetVolume - startVolume) * progress
+    const progress = CesiumMath.clamp((now - startedAt) / duration, 0, 1)
+    audio.volume = CesiumMath.clamp(
+      startVolume + (clampedTargetVolume - startVolume) * progress,
+      0,
+      1,
+    )
 
     if (progress < 1) {
       audioFadeFrames.set(audio, requestAnimationFrame(animate))
       return
     }
 
-    audio.volume = targetVolume
+    audio.volume = clampedTargetVolume
     audioFadeFrames.delete(audio)
     onComplete?.()
   }
