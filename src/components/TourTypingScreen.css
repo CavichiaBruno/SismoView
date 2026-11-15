@@ -174,7 +174,14 @@
 
 @media (max-width: 640px) {
   .typing-backdrop {
-    padding: 1.25rem;
+    align-items: flex-start;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    padding:
+      max(4.25rem, calc(env(safe-area-inset-top) + 3.25rem))
+      1rem
+      max(1.5rem, env(safe-area-inset-bottom));
   }
 
   .auto-continue {
@@ -182,8 +189,53 @@
     right: max(1rem, env(safe-area-inset-right));
   }
 
+  .typing-container {
+    flex: 0 0 auto;
+    max-width: 36rem;
+    margin: auto;
+  }
+
+  .typing-body {
+    width: 100%;
+    gap: clamp(0.45rem, 1.3dvh, 0.8rem);
+  }
+
+  .typing-line {
+    width: 100%;
+    max-width: 38ch;
+    overflow-wrap: anywhere;
+    font-size: clamp(0.95rem, 4vw, 1.05rem);
+    line-height: 1.38;
+    letter-spacing: -0.02em;
+  }
+
+  .typing-line.time-stamp {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+  }
+
   .typing-line.epicenter-highlight {
-    font-size: clamp(1.4rem, 7vw, 2rem);
+    font-size: clamp(1.15rem, 5.8vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .typing-footer {
+    margin-top: 0.75rem;
+  }
+
+  .skip-btn {
+    min-height: 44px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 500px) {
+  .typing-backdrop {
+    padding-top: max(3.5rem, calc(env(safe-area-inset-top) + 2.5rem));
+  }
+
+  .typing-body {
+    gap: 0.4rem;
   }
 }
 

@@ -9,6 +9,8 @@ import { TiltedGridHero } from './tilted-grid-hero'
 import GlowButton from './glow-button'
 import { LanguageSelector } from '../LanguageSelector'
 import { translate } from '../../i18n'
+import { useTranslation } from 'react-i18next'
+import { VideoPlayer } from './video-player'
 
 const observationImages = [
   {
@@ -90,6 +92,8 @@ export function ParallaxComponent({
   onStart,
   onOpenDashboard,
 }: ParallaxComponentProps) {
+  const { i18n } = useTranslation()
+  const videoLanguage = i18n.language.startsWith('en') ? 'en' : 'es'
   const parallaxRef = useRef<HTMLDivElement>(null)
   const introAudioRef = useRef<HTMLAudioElement | null>(null)
   const introAudioStartedRef = useRef(false)
@@ -318,35 +322,12 @@ export function ParallaxComponent({
         </section>
         <section className="parallax__story" aria-labelledby="story-title">
           <div className="parallax__story-inner">
-            <p className="parallax__story-eyebrow">
-              {translate('Venezuela · Un paisaje en movimiento')}
-            </p>
-            <h2 id="story-title">
-              {translate('Cuando la tierra se mueve, ¿qué queda por descubrir?')}
-            </h2>
-            <p className="parallax__story-intro">
-              {translate('Dos sismos, un territorio y una pregunta: ¿cómo cambió la superficie? Sigue las pistas desde el espacio hasta el terreno.')}
-            </p>
-            <div className="parallax__chapters">
-              <article className="parallax__chapter">
-                <span className="parallax__chapter-number">01</span>
-                <h3>{translate('La tierra tiembla')}</h3>
-                <p>{translate('El caso reúne dos epicentros en Venezuela. Su ubicación es el comienzo de la historia, no un mapa completo de la deformación.')}</p>
-              </article>
-              <article className="parallax__chapter">
-                <span className="parallax__chapter-number">02</span>
-                <h3>{translate('El radar escucha la superficie')}</h3>
-                <p>{translate('NISAR emite su propia señal y observa de día o de noche, incluso con nubes. Al comparar observaciones, InSAR ayuda a estudiar el movimiento hacia o desde el radar.')}</p>
-              </article>
-              <article className="parallax__chapter">
-                <span className="parallax__chapter-number">03</span>
-                <h3>{translate('De la señal a las preguntas')}</h3>
-                <p>{translate('Explora fase, coherencia y polarizaciones HH/HV. Una señal puede tener varias causas: contrasta las capas antes de sacar conclusiones sobre el terreno.')}</p>
-              </article>
-            </div>
-            <p className="parallax__story-note">
-              {translate('Hipótesis de trabajo: la ruptura sísmica pudo deformar la superficie. La coherencia y la geometría de observación limitan dónde y cómo podemos comprobarlo.')}
-            </p>
+            <h2 id="story-title">{translate('Vídeo Space Apps')}</h2>
+            <VideoPlayer
+              key={videoLanguage}
+              src={`/videos/video_space_apps_${videoLanguage}.mp4`}
+              title={translate('Vídeo Space Apps')}
+            />
           </div>
         </section>
         <TiltedGridHero

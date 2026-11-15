@@ -1653,25 +1653,25 @@ export function CesiumMap({
       }, false),
       billboard: {
         image: createNisarOrbitMarker(),
-        width: 48,
-        height: 48,
+        width: 64,
+        height: 64,
         verticalOrigin: VerticalOrigin.CENTER,
         horizontalOrigin: HorizontalOrigin.CENTER,
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        scaleByDistance: new NearFarScalar(1.0e6, 1.15, 3.2e7, 0.8),
+        scaleByDistance: new NearFarScalar(1.0e6, 1.2, 3.2e7, 1.0),
       },
       label: {
         text: 'NISAR',
-        font: 'bold 13px Inter, sans-serif',
+        font: 'bold 15px Inter, sans-serif',
         fillColor: Color.WHITE,
         outlineColor: Color.fromCssColorString('#07111b'),
         outlineWidth: 3,
         style: LabelStyle.FILL_AND_OUTLINE,
         verticalOrigin: VerticalOrigin.BOTTOM,
         horizontalOrigin: HorizontalOrigin.CENTER,
-        pixelOffset: new Cartesian2(0, -24),
+        pixelOffset: new Cartesian2(0, -32),
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        scaleByDistance: new NearFarScalar(1.0e6, 1.0, 3.2e7, 0.8),
+        scaleByDistance: new NearFarScalar(1.0e6, 1.1, 3.2e7, 0.95),
       },
     })
 
@@ -2386,7 +2386,9 @@ export function CesiumMap({
         && !isProvisioningLeaving
         && (tourStep !== 'nisar_intro' || isVoiceIntroComplete) && (
         <>
-          {tourStep === 'nisar_intro' && !isStepperExpanded && <NisarSatellite />}
+          {tourStep === 'nisar_intro' && (
+            <NisarSatellite isIntroExpanded={isStepperExpanded} />
+          )}
           <TourStepper
             currentStep={tourStep}
             animateNisarIntro={isNisarIntroAnimationReady}

@@ -110,6 +110,13 @@ dl{margin:0}
 .app{grid-template-rows:minmax(0,1fr) auto!important}
 .bar{background:var(--surface);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
 .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+@media (max-width:900px){
+  .bar{flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;touch-action:pan-x;padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px))}
+  .grp{flex:0 0 auto;flex-wrap:nowrap;gap:5px}
+  .grp>b{white-space:nowrap}
+  .chip{flex:0 0 auto;min-height:40px;padding:8px 11px}
+  .ibtn{width:44px;height:44px}
+}
 .grp>b{font:500 10px var(--f-mono);color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-right:2px}
 .chip.ex{border-color:var(--ok);color:var(--ok)}.chip.ex.on{background:var(--ok);color:#06241a}
 #leaders{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}

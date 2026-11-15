@@ -4,7 +4,7 @@ import './NisarSatellite.css'
 
 const ASSET_BASE = import.meta.env.BASE_URL
 
-export function NisarSatellite() {
+export function NisarSatellite({ isIntroExpanded = false }: { isIntroExpanded?: boolean }) {
   const [isModelLoaded, setIsModelLoaded] = useState(false)
   const [minimumLoadingTimePassed, setMinimumLoadingTimePassed] = useState(false)
   const [isEntranceReady, setIsEntranceReady] = useState(false)
@@ -21,7 +21,7 @@ export function NisarSatellite() {
 
   return (
     <section
-      className={`nisar-experience${isEntranceReady ? ' nisar-experience--entering' : ''}`}
+      className={`nisar-experience${isEntranceReady ? ' nisar-experience--entering' : ''}${isIntroExpanded ? ' nisar-experience--intro-expanded' : ''}`}
       aria-label={translate('Explora el satélite NISAR')}
     >
       <div className="nisar-model-stage">

@@ -972,6 +972,22 @@
   .dash-row-3 { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
+  .dash-header {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .dash-header-title {
+    min-width: 0;
+  }
+  .dash-header-title h1 {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+  .dash-header-status {
+    flex: 0 0 auto;
+    font-size: 10px;
+    white-space: nowrap;
+  }
   .dash-story-clues { grid-template-columns: 1fr; }
   .dash-story-clues p { min-height: 0; }
   .dash-story-map { min-height: 340px; }
