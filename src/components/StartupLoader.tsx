@@ -99,6 +99,14 @@ export function StartupLoader({
             </p>
             <div className="startup-loader__start-actions">
               <LanguageSelector className="language-selector language-selector--startup" />
+              <a
+                className="startup-loader__repo-button"
+                href="https://github.com/CavichiaBruno/SismoView"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {translate('Repositorio')}
+              </a>
               <button
                 className="startup-loader__start-button startup-loader__start-button--quiet"
                 type="button"

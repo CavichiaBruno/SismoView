@@ -12,6 +12,7 @@ const englishTranslations: Record<string, string> = {
     'Would you like to turn on sound for the full experience?',
   'Continuar sin sonido': 'Continue without sound',
   'Activar sonido': 'Turn on sound',
+  'Repositorio': 'Repository',
   'Iniciar recorrido': 'Start tour',
   'Ir al dashboard': 'Go to dashboard',
   'Desliza para descubrir la historia': 'Scroll to discover the story',
