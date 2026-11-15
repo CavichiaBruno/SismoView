@@ -208,10 +208,13 @@ export function ParallaxComponent({
       ]
 
       layers.forEach((layer, index) => {
+        const targets = layersElement.querySelectorAll(
+          `[data-parallax-layer="${layer.layer}"]`,
+        )
+        if (!targets.length) return
+
         timeline.to(
-          layersElement.querySelectorAll(
-            `[data-parallax-layer="${layer.layer}"]`,
-          ),
+          targets,
           { yPercent: layer.yPercent, ease: 'none' },
           index === 0 ? undefined : '<',
         )

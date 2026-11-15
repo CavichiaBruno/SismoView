@@ -22,7 +22,7 @@ function measure(
   const h = Math.min((tile / 100) * height, ((MAX_WIDTH / 100) * width) / aspect)
   const radius = width * arc(bend)
   if (!(h > 0) || !(radius > 0)) {
-    return { columns: 2, sweep: 0, unit: 0, limit: 0 }
+    return { columns: 2, sweep: 0, unit: 0, limit: 0, tileSize: 0 }
   }
   const deg = (rad: number) => (rad * 180) / Math.PI
   const unit = deg(h / radius)
@@ -37,6 +37,7 @@ function measure(
     sweep,
     unit: round(unit),
     limit: round(Math.min(sweep, limit)),
+    tileSize: h,
   }
 }
 
@@ -107,7 +108,8 @@ export function TiltedGridHero({
       setLayout((previous) =>
         previous?.columns === next.columns &&
         previous.sweep === next.sweep &&
-        previous.unit === next.unit
+        previous.unit === next.unit &&
+        previous.tileSize === next.tileSize
           ? previous
           : next,
       )
@@ -116,12 +118,9 @@ export function TiltedGridHero({
     return () => observer.disconnect()
   }, [hasEnteredViewport, tileHeight, aspectRatio, gap, bend])
 
-  const { columns, sweep, unit, limit } =
+  const { columns, sweep, unit, limit, tileSize } =
     layout ?? measure(1200, 560, tileHeight, aspectRatio, gap, bend)
-  const u = (value: number) =>
-    `calc(${+value.toFixed(4)} * min(${tileHeight}cqh, ${+(
-      MAX_WIDTH / aspectRatio
-    ).toFixed(4)}cqw))`
+  const u = (value: number) => `${+(value * tileSize).toFixed(4)}px`
   const r = 100 * arc(bend)
   const radius = `${+r.toFixed(3)}cqw`
   const turn = (degrees: number) =>
