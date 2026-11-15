@@ -4,6 +4,7 @@ import { TOUR_STEPS, type TourStepId } from '../data/tourConfig'
 import type { Earthquake } from '../data/earthquakes'
 import type { GcovLayer, RadarLayer } from '../data/gcov'
 import { translate } from '../i18n'
+import { LayerSourceInfo } from './LayerSourceInfo'
 import './TourStepper.css'
 
 const INSAR_GUIDE_ITEMS = [
@@ -644,6 +645,7 @@ export const TourStepper: React.FC<TourStepperProps> = ({
                         <span key={`${activeGuideLayer}-${index}`}>{translate(label)}</span>
                       ))}
                     </div>
+                    <LayerSourceInfo layer={GUIDE_LAYER_RADAR_LAYERS[activeGuideLayer]} />
 
                     {activeRadarModule === 'polarization' && (activeGuideLayer === 9 || activeGuideLayer === 10) && (
                       <div className="insar-module-controls">

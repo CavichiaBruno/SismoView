@@ -18,6 +18,12 @@ geoespaciales y sus métricas. El objetivo es facilitar la exploración y la
 comunicación de un conjunto de datos complejo; no emitir alertas ni sustituir
 un análisis sismológico o geodésico.
 
+La historia parte de una pregunta: ¿cómo cambió la superficie en torno a los
+epicentros? Plantea como hipótesis que la ruptura pudo deformar el terreno y
+propone examinar fase, coherencia y desplazamiento antes de interpretarlo. La
+hipótesis no identifica por sí sola la falla responsable ni atribuye todos los
+cambios observados al sismo.
+
 ## Qué incluye
 
 - **Introducción y recorrido interactivo:** explica la misión NISAR, su órbita,
@@ -29,6 +35,11 @@ un análisis sismológico o geodésico.
   gradientes de fase y retrodispersión GCOV HH/HV de distintas fechas.
 - **Dashboard analítico:** presenta mapas de epicentros y cobertura, gráficas
   de magnitud, tasa de momento y tensor de momento, además de métricas del caso.
+  Incluye una comparación GCOV con cortina HH/HV, tres pistas conectadas a sus
+  capas, una conclusión con hipótesis y límites, y un mapa de contexto territorial
+  donde se pueden superponer LOS o coherencia a localidades y vías.
+  La comparación GCOV usa una vista cenital sin exageración vertical y controles
+  de zoom; las demás capas conservan su vista 3D.
 - **Interfaz en español e inglés:** el selector de idioma guarda la preferencia
   localmente en el navegador.
 - **Observatorio NISAR:** incluye una página informativa integrada en el
@@ -74,6 +85,30 @@ Ten en cuenta estas limitaciones al interpretar los resultados:
 
 Para obtener detalles de los productos y reproducir los flujos de preparación,
 consulta [`scripts/README.md`](./scripts/README.md).
+
+### Fuentes del caso
+
+| Visualización | Datos y procesamiento | Fechas y unidades |
+| --- | --- | --- |
+| Comparación GCOV HH/HV | NISAR L2 GCOV, descargado desde ASF; [`nisar_gcov_overlays.py`](./scripts/nisar_gcov_overlays.py) comprueba la cuadrícula, reproyecta y usa una escala común por polarización. | 13 de junio y 17 de septiembre de 2026; retrodispersión gamma-0 en dB. Los cambios también pueden reflejar humedad o vegetación. |
+| Franjas y LOS | NISAR L2 GUNW; [`nisar_gunw.py`](./scripts/nisar_gunw.py) procesa fase y desplazamiento. La coherencia local se presenta como capa de calidad. | 13–25 de junio de 2026, track 162 ascendente; fase cíclica, coherencia 0–1 y LOS relativo en cm. |
+| Geometrías, componentes y gradientes | Productos LOS de [UCSD](https://topex.ucsd.edu/VNZ_7.5/web/), preparados con [`ucsd_los_fault_layers.py`](./scripts/ucsd_los_fault_layers.py). | Ascendente 13–25 y descendente 17–29 de junio de 2026; LOS y componentes en mm. Los gradientes no son desplazamientos. |
+| Mapa territorial | Teselas y datos de [OpenStreetMap y sus colaboradores](https://www.openstreetmap.org/copyright), superpuestos con las capas locales. | El mapa aporta contexto de localidades y vías, no datos de daños ni de exposición verificada. |
+| Falla finita y gráficos sísmicos | Modelo y parámetros atribuidos a USGS en las visualizaciones; el GeoJSON local incluye el identificador `us6000t7zp`. | El modelo es una interpretación, no una medición directa de la falla. |
+
+Los identificadores completos de los gránulos NISAR figuran en los scripts.
+Las métricas de coherencia mostradas se calculan sobre el GeoTIFF local con
+[`coherence_metrics.mjs`](./scripts/coherence_metrics.mjs): se incluyen los
+valores finitos entre 0 y 1, incluidos los ceros; los radios utilizan centros
+de píxel a 10 km del epicentro en EPSG:32619. El 16,7 % usa como denominador
+todos los píxeles del ráster, incluidos los inválidos. Las cifras están
+precalculadas en el frontend y no se actualizan automáticamente si cambia el
+GeoTIFF. La generación del PNG de coherencia no está documentada en los
+scripts; no se ha verificado su correspondencia exacta con el GeoTIFF. Las
+capas, escalas, fechas y limitaciones también aparecen en «Ficha de la capa y
+fuentes» dentro de la app.
+El script de cálculo se puede descargar desde la tarjeta de coherencia o su
+ficha de fuentes en la aplicación.
 
 ## Requisitos
 
@@ -183,6 +218,9 @@ de visualización configurados en `src/data/`.
 
 ## Licencia y atribución
 
-Este repositorio no incluye actualmente un archivo de licencia en la raíz.
-Antes de reutilizar o redistribuir el código, los datos o los recursos
-multimedia, verifica sus condiciones de uso y atribución correspondientes.
+El código y la documentación propios se distribuyen bajo la [licencia MIT](./LICENSE).
+Esta licencia no modifica los derechos ni las condiciones de uso de los datos,
+mapas, fuentes, modelos, imágenes, audio, logotipos o dependencias de terceros.
+Consulta sus fuentes y condiciones antes de reutilizarlos o redistribuirlos;
+la lista anterior y los scripts documentan las fuentes identificadas, no
+constituyen una cesión de derechos de los recursos de terceros.

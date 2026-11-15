@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  Cartesian2,
   Cartesian3,
   Color,
   createWorldImageryAsync,
@@ -7,6 +8,8 @@ import {
   EasingFunction,
   EllipsoidTerrainProvider,
   HeadingPitchRange,
+  HeightReference,
+  HorizontalOrigin,
   Ion,
   Math as CesiumMath,
   Matrix4,
@@ -14,21 +17,24 @@ import {
   SplitDirection,
   SingleTileImageryProvider,
   Viewer,
+  VerticalOrigin,
   type ImageryLayer,
   type ImageryProvider,
 } from 'cesium'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Minus, Plus, RotateCcw } from 'lucide-react'
 import { coherenceOverlay } from '../data/coherence'
 import { deformationComponents } from '../data/deformationComponents'
 import { displacementOverlay } from '../data/displacement'
 import { faultOverlay } from '../data/faultGradients'
 import { fringeOverlay } from '../data/fringes'
 import { gcovOverlays } from '../data/gcov'
+import { earthquakes } from '../data/earthquakes'
 import { terrainBlock } from '../data/terrainBlock'
 import { translate } from '../i18n'
+import { LayerSourceInfo } from './LayerSourceInfo'
 import './CoverageQualityMap.css'
 
-type SlideIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type SlideIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 type LayerSource = {
   image: string
   bounds: { west: number; south: number; east: number; north: number }
@@ -124,11 +130,19 @@ function rectangleFor(bounds: { west: number; south: number; east: number; north
   return Rectangle.fromDegrees(bounds.west, bounds.south, bounds.east, bounds.north)
 }
 
-export function CoverageQualityMap() {
+export function CoverageQualityMap({
+  selection,
+  onSlideChange,
+}: {
+  selection?: { index: SlideIndex; request: number }
+  onSlideChange?: (index: SlideIndex) => void
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<Viewer | null>(null)
   const activeSlideRef = useRef<SlideIndex>(0)
-  const selectSlideRef = useRef<(index: SlideIndex) => void>(() => {})
+  const selectSlideRef = useRef<(index: SlideIndex, manual?: boolean) => void>(() => {})
+  const resetViewRef = useRef<() => void>(() => {})
+  const manualSelectionRef = useRef(false)
   const [activeSlide, setActiveSlide] = useState<SlideIndex>(0)
   const [comparisonPosition, setComparisonPosition] = useState(0.5)
   const [isReady, setIsReady] = useState(false)
@@ -172,7 +186,31 @@ export function CoverageQualityMap() {
     viewer.scene.globe.enableLighting = true
     viewer.scene.globe.depthTestAgainstTerrain = true
     viewer.scene.globe.maximumScreenSpaceError = 1.5
-    viewer.scene.verticalExaggeration = TERRAIN_EXAGGERATION
+    earthquakes.forEach((event) => {
+      viewer.entities.add({
+        position: Cartesian3.fromDegrees(event.longitude, event.latitude),
+        point: {
+          pixelSize: 8,
+          color: Color.fromCssColorString('#facc15'),
+          outlineColor: Color.BLACK,
+          outlineWidth: 2,
+          heightReference: HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        label: {
+          text: event.id === 'yunare' ? 'Catia La Mar' : 'San Felipe',
+          font: '12px sans-serif',
+          fillColor: Color.WHITE,
+          showBackground: true,
+          backgroundColor: Color.fromCssColorString('#080e18').withAlpha(0.85),
+          pixelOffset: new Cartesian2(0, -12),
+          horizontalOrigin: HorizontalOrigin.CENTER,
+          verticalOrigin: VerticalOrigin.BOTTOM,
+          heightReference: HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      })
+    })
 
     const cameraController = viewer.scene.screenSpaceCameraController
     cameraController.enableRotate = false
@@ -184,14 +222,42 @@ export function CoverageQualityMap() {
     const terrainCenterLongitude = (terrainBlock.grid.west + terrainBlock.grid.east) / 2
     const terrainCenterLatitude = (terrainBlock.grid.south + terrainBlock.grid.north) / 2
     const terrainCenter = Cartesian3.fromDegrees(terrainCenterLongitude, terrainCenterLatitude)
-    viewer.camera.lookAt(
-      terrainCenter,
-      new HeadingPitchRange(
-        CesiumMath.toRadians(15),
-        CesiumMath.toRadians(-20),
-        TERRAIN_CAMERA_RANGE_METERS,
-      ),
-    )
+    const cameraRange = container.clientWidth < 500 ? 210_000 : TERRAIN_CAMERA_RANGE_METERS
+    const setSlideView = (index: SlideIndex) => {
+      viewer.camera.cancelFlight()
+      viewer.camera.lookAtTransform(Matrix4.IDENTITY)
+      const isGcov = index <= 1
+      viewer.scene.verticalExaggeration = isGcov ? 1 : TERRAIN_EXAGGERATION
+      viewer.scene.globe.enableLighting = !isGcov
+      if (isGcov) {
+        viewer.camera.setView({
+          destination: rectangleFor(gcovOverlays.hhBefore.bounds),
+          orientation: { heading: 0, pitch: -CesiumMath.PI_OVER_TWO, roll: 0 },
+        })
+      } else if (SLIDES[index].focus) {
+        viewer.camera.flyTo({
+          destination: rectangleFor(SLIDES[index].focus),
+          orientation: { heading: 0, pitch: -CesiumMath.PI_OVER_TWO, roll: 0 },
+          duration: 2.4,
+          easingFunction: EasingFunction.CUBIC_IN_OUT,
+        })
+      } else {
+        viewer.camera.lookAt(
+          terrainCenter,
+          new HeadingPitchRange(CesiumMath.toRadians(15), CesiumMath.toRadians(-20), cameraRange),
+        )
+      }
+      viewer.scene.requestRender()
+    }
+    setSlideView(0)
+    resetViewRef.current = () => setSlideView(activeSlideRef.current)
+    const resizeObserver = new ResizeObserver(() => {
+      if (viewer.isDestroyed()) return
+      viewer.resize()
+      if (activeSlideRef.current <= 1) setSlideView(activeSlideRef.current)
+      else viewer.scene.requestRender()
+    })
+    resizeObserver.observe(container)
 
     let disposed = false
     let transitionTimeout = 0
@@ -250,11 +316,11 @@ export function CoverageQualityMap() {
       const terrainResult = terrainResults[0]
       if (terrainResult.status === 'fulfilled' && terrainResult.value) {
         viewer.terrainProvider = terrainResult.value
-        viewer.scene.verticalExaggeration = TERRAIN_EXAGGERATION
       } else if (terrainResult.status === 'rejected') {
         console.error('Unable to load terrain in the coverage and quality preview.', terrainResult.reason)
         if (ionToken) {
           disposed = true
+          resizeObserver.disconnect()
           window.clearTimeout(readinessTimeout)
           viewer.destroy()
           setLoadError(true)
@@ -298,6 +364,7 @@ export function CoverageQualityMap() {
           : undefined
         if (!left || (slide.right && !right)) {
           disposed = true
+          resizeObserver.disconnect()
           window.clearTimeout(readinessTimeout)
           viewer.destroy()
           setLoadError(true)
@@ -308,10 +375,16 @@ export function CoverageQualityMap() {
 
       removeReadinessListener = viewer.scene.postRender.addEventListener(markReady)
       viewer.scene.requestRender()
-      const selectSlide = (nextIndex: SlideIndex) => {
-        if (disposed || viewer.isDestroyed() || nextIndex === activeSlideRef.current) return
+      const selectSlide = (nextIndex: SlideIndex, manual = false) => {
+        if (disposed || viewer.isDestroyed()) return
+        if (manual) manualSelectionRef.current = true
         window.clearTimeout(transitionTimeout)
+        if (nextIndex === activeSlideRef.current) return
         window.cancelAnimationFrame(opacityFrame)
+        slideLayers.forEach(({ left, right }) => {
+          left.alpha = 0
+          if (right) right.alpha = 0
+        })
         const fromLayers = slideLayers[activeSlideRef.current]
         const toLayers = slideLayers[nextIndex]
         fromLayers.left.alpha = 1
@@ -320,30 +393,7 @@ export function CoverageQualityMap() {
         if (toLayers.right) toLayers.right.alpha = 0
         const startedAt = performance.now()
 
-        viewer.camera.cancelFlight()
-        viewer.camera.lookAtTransform(Matrix4.IDENTITY)
-        const focus = SLIDES[nextIndex].focus
-        if (focus) {
-          viewer.camera.flyTo({
-            destination: rectangleFor(focus),
-            orientation: {
-              heading: 0,
-              pitch: -CesiumMath.PI_OVER_TWO,
-              roll: 0,
-            },
-            duration: 2.4,
-            easingFunction: EasingFunction.CUBIC_IN_OUT,
-          })
-        } else {
-          viewer.camera.lookAt(
-            Cartesian3.fromDegrees(terrainCenterLongitude, terrainCenterLatitude),
-            new HeadingPitchRange(
-              CesiumMath.toRadians(15),
-              CesiumMath.toRadians(-20),
-              TERRAIN_CAMERA_RANGE_METERS,
-            ),
-          )
-        }
+        setSlideView(nextIndex)
         activeSlideRef.current = nextIndex
         setActiveSlide(nextIndex)
 
@@ -357,7 +407,7 @@ export function CoverageQualityMap() {
 
           if (progress < 1) {
             opacityFrame = window.requestAnimationFrame(animateOpacity)
-          } else {
+          } else if (!manualSelectionRef.current) {
             const nextSlide = ((nextIndex + 1) % SLIDES.length) as SlideIndex
             transitionTimeout = window.setTimeout(
               () => selectSlide(nextSlide),
@@ -383,6 +433,7 @@ export function CoverageQualityMap() {
       if (mapReady || disposed || viewer.isDestroyed()) return
       console.error('Timed out while loading terrain and imagery in the coverage and quality preview.')
       disposed = true
+      resizeObserver.disconnect()
       viewer.destroy()
       setLoadError(true)
     }, 30_000)
@@ -391,17 +442,38 @@ export function CoverageQualityMap() {
 
     return () => {
       disposed = true
+      resizeObserver.disconnect()
       window.clearTimeout(transitionTimeout)
       window.clearTimeout(readinessTimeout)
       window.cancelAnimationFrame(opacityFrame)
       removeReadinessListener()
       selectSlideRef.current = () => {}
+      resetViewRef.current = () => {}
       viewerRef.current = null
       if (!viewer.isDestroyed()) viewer.destroy()
     }
   }, [])
 
+  useEffect(() => {
+    if (isReady && selection) selectSlideRef.current(selection.index, true)
+  }, [isReady, selection])
+
+  useEffect(() => {
+    onSlideChange?.(activeSlide)
+  }, [activeSlide, onSlideChange])
+
+  const zoom = (direction: 'in' | 'out') => {
+    const viewer = viewerRef.current
+    if (!viewer || viewer.isDestroyed()) return
+    const height = viewer.camera.positionCartographic.height
+    if (direction === 'in' && height > 5_000) viewer.camera.zoomIn(height * 0.3)
+    if (direction === 'out' && height < 1_000_000) viewer.camera.zoomOut(height * 0.4)
+    viewer.scene.requestRender()
+  }
+
   const updateComparisonPosition = (value: string) => {
+    manualSelectionRef.current = true
+    selectSlideRef.current(activeSlideRef.current, true)
     const position = Number(value) / 100
     setComparisonPosition(position)
     const viewer = viewerRef.current
@@ -411,6 +483,11 @@ export function CoverageQualityMap() {
   }
 
   const slide = SLIDES[activeSlide]
+
+  const sourceLayers = [
+    'gcov_hh_before', 'gcov_hv_before', 'los_ascending', 'phase_gradient_t162a',
+    'fringes', 'coherence', 'displacement', 'east_west', 'vertical',
+  ] as const
 
   return (
     <div className="dash-quality-map">
@@ -425,7 +502,7 @@ export function CoverageQualityMap() {
             ref={containerRef}
             role="img"
             aria-label={slide.right
-              ? translate('Comparación 3D: {{title}}; {{left}} frente a {{right}}', {
+              ? translate('Comparación: {{title}}; {{left}} frente a {{right}}', {
                 title: translate(slide.title),
                 left: translate(slide.leftLabel),
                 right: translate(slide.rightLabel ?? ''),
@@ -449,7 +526,7 @@ export function CoverageQualityMap() {
                 aria-label={translate('Capa anterior')}
                 disabled={!isReady}
                 onClick={() => selectSlideRef.current(
-                  ((activeSlide + SLIDES.length - 1) % SLIDES.length) as SlideIndex,
+                  ((activeSlide + SLIDES.length - 1) % SLIDES.length) as SlideIndex, true,
                 )}
               >
                 <ChevronLeft size={12} aria-hidden="true" />
@@ -459,13 +536,15 @@ export function CoverageQualityMap() {
                 aria-label={translate('Siguiente capa')}
                 disabled={!isReady}
                 onClick={() => selectSlideRef.current(
-                  ((activeSlide + 1) % SLIDES.length) as SlideIndex,
+                  ((activeSlide + 1) % SLIDES.length) as SlideIndex, true,
                 )}
               >
                 <ChevronRight size={12} aria-hidden="true" />
               </button>
             </div>
-            <span className="dash-quality-map__mode">3D · ×8</span>
+            <span className="dash-quality-map__mode">
+              {activeSlide <= 1 ? translate('Vista cenital') : '3D · ×8'}
+            </span>
           </div>
           <div className="dash-quality-map__dates" aria-hidden="true">
             <span>{translate(slide.leftLabel)}</span>
@@ -491,11 +570,25 @@ export function CoverageQualityMap() {
               />
             </>
           )}
+          {activeSlide <= 1 && (
+            <div className="dash-quality-map__zoom" role="group" aria-label={translate('Controles de zoom')}>
+              <button type="button" onClick={() => zoom('in')} disabled={!isReady} aria-label={translate('Acercar mapa')}>
+                <Plus size={16} aria-hidden="true" />
+              </button>
+              <button type="button" onClick={() => zoom('out')} disabled={!isReady} aria-label={translate('Alejar mapa')}>
+                <Minus size={16} aria-hidden="true" />
+              </button>
+              <button type="button" onClick={() => resetViewRef.current()} disabled={!isReady} aria-label={translate('Restablecer vista')}>
+                <RotateCcw size={15} aria-hidden="true" />
+              </button>
+            </div>
+          )}
           <div className="dash-quality-map__note" title={translate(slide.note)}>
             {translate(slide.note)}
           </div>
         </div>
       )}
+      <LayerSourceInfo layer={sourceLayers[activeSlide]} />
     </div>
   )
 }

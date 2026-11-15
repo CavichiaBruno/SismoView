@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import type { Earthquake } from '../data/earthquakes'
+import { displacementOverlay } from '../data/displacement'
+import { coherenceOverlay } from '../data/coherence'
 import i18n, { translate } from '../i18n'
 import {
   FINITE_FAULT_GEOJSON_URL,
@@ -22,6 +24,8 @@ export function EpicenterMap({ events }: Props) {
   const faultLayerRef = useRef<L.GeoJSON | null>(null)
   const showFaultModelRef = useRef(true)
   const [showFaultModel, setShowFaultModel] = useState(true)
+  const [contextLayer, setContextLayer] = useState<'none' | 'displacement' | 'coherence'>('none')
+  const [radarError, setRadarError] = useState(false)
   const [finiteFaultError, setFiniteFaultError] = useState<string | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const mapFrameRef = useRef<HTMLDivElement>(null)
@@ -44,7 +48,7 @@ export function EpicenterMap({ events }: Props) {
       scrollWheelZoom: true,
       zoomControl: true,
       minZoom: 6,
-      maxZoom: 10,
+      maxZoom: 15,
       zoomSnap: 0.5,
       zoomAnimation: false,
       fadeAnimation: false,
@@ -185,6 +189,24 @@ export function EpicenterMap({ events }: Props) {
 
   useEffect(() => {
     const map = mapRef.current
+    if (!map || contextLayer === 'none') return
+    const overlay = contextLayer === 'displacement' ? displacementOverlay : coherenceOverlay
+    const { west, south, east, north } = overlay.bounds
+    const layer = L.imageOverlay(overlay.image, [[south, west], [north, east]], {
+      opacity: 0.6,
+      interactive: false,
+    })
+    layer.on('error', () => {
+      console.error(`Unable to load radar overlay: ${overlay.image}`)
+      setRadarError(true)
+    })
+    layer.on('load', () => setRadarError(false))
+    layer.addTo(map)
+    return () => { map.removeLayer(layer) }
+  }, [contextLayer, events])
+
+  useEffect(() => {
+    const map = mapRef.current
     if (!map) return
     let secondFrameId = 0
     const frameId = window.requestAnimationFrame(() => {
@@ -265,6 +287,19 @@ export function EpicenterMap({ events }: Props) {
             <span className="dash-epicenter-map__layer-swatch dash-epicenter-map__layer-swatch--slip" aria-hidden="true" />
             {translate('Falla finita · deslizamiento (m)')}
           </button>
+          <label>
+            <select aria-label={translate('Capa radar sobre el territorio')} value={contextLayer} onChange={(event) => {
+              const value = event.currentTarget.value
+              if (value === 'none' || value === 'displacement' || value === 'coherence') {
+                setRadarError(false)
+                setContextLayer(value)
+              }
+            }}>
+              <option value="none">{translate('Sin capa radar')}</option>
+              <option value="displacement">{translate('Desplazamiento LOS')}</option>
+              <option value="coherence">{translate('Coherencia')}</option>
+            </select>
+          </label>
         </div>
         <div className="dash-epicenter-map__legend" aria-label={translate('Leyenda de deslizamiento por subfalla')}>
           <span>{translate('Deslizamiento por subfalla')}</span>
@@ -276,6 +311,9 @@ export function EpicenterMap({ events }: Props) {
         </div>
         {finiteFaultError && (
           <div className="dash-epicenter-map__error" role="alert">{finiteFaultError}</div>
+        )}
+        {radarError && (
+          <div className="dash-epicenter-map__error" role="alert">{translate('No se pudo cargar la capa radar.')}</div>
         )}
         <button
           ref={expandButtonRef}

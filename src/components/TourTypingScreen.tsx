@@ -15,7 +15,7 @@ const NARRATIVE_PARAGRAPHS = [
   translate('En un intervalo de apenas 50 segundos, la tierra fue sacudida por un doblete sísmico histórico:'),
   translate('• 14:04 VET · San Felipe (Yaracuy) — Magnitud 7.2 Mw'),
   translate('• 14:05 VET · Catia La Mar (La Guaira) — Magnitud 7.5 Mw'),
-  translate('A 747 km de altura, el radar de apertura sintética NISAR registró cada milímetro de desplazamiento en la corteza terrestre...'),
+  translate('Desde la órbita, NISAR ofrece otra perspectiva: comparar observaciones radar puede revelar cómo se movió la superficie hacia o desde el satélite.'),
 ]
 const AUTO_CONTINUE_DELAY = 6000
 const BETWEEN_LINES_DELAY = 350

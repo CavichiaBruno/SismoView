@@ -155,6 +155,23 @@
   backdrop-filter: blur(8px);
 }
 
+.dash-epicenter-map__layers select {
+  max-width: 100%;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 6px;
+  background: #0b1320;
+  color: #e2e8f0;
+  font: inherit;
+  font-size: 10px;
+}
+
+.dash-epicenter-map__layers select:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
 .dash-epicenter-map__layers button.is-active {
   border-color: rgb(125 211 252 / 45%);
   color: #f1f5f9;

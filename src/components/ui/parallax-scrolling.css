@@ -209,6 +209,94 @@
   pointer-events: none;
 }
 
+.parallax__scroll-hint {
+  position: absolute;
+  z-index: 3;
+  bottom: max(2rem, env(safe-area-inset-bottom));
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: max-content;
+  max-width: 90%;
+  margin: 0;
+  color: rgb(255 255 255 / 90%);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.parallax__scroll-hint span {
+  font-size: 1.25rem;
+}
+
+.parallax__story {
+  background: radial-gradient(ellipse at 75% 0%, #142c38 0%, #070d13 55%);
+  padding: clamp(5rem, 10vw, 9rem) 1.5rem;
+}
+
+.parallax__story-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.parallax__story-eyebrow,
+.parallax__chapter-number {
+  color: #8bcbd9;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.parallax__story h2 {
+  max-width: 19ch;
+  margin: 1.2rem 0;
+  font-size: clamp(2.4rem, 5.5vw, 5rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.parallax__story-intro {
+  max-width: 42rem;
+  color: #c3d2d8;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.parallax__chapters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.parallax__chapter {
+  border-top: 1px solid rgb(139 203 217 / 40%);
+  padding-top: 1.25rem;
+}
+
+.parallax__chapter h3 {
+  margin: 1rem 0 0.7rem;
+  font-size: 1.2rem;
+}
+
+.parallax__chapter p,
+.parallax__story-note {
+  color: #b1c1c8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.parallax__story-note {
+  max-width: 55rem;
+  margin: 3rem 0 0;
+  border-left: 2px solid #8bcbd9;
+  padding-left: 1rem;
+}
+
 .parallax__actions {
   position: relative;
   z-index: 2;
@@ -317,6 +405,10 @@
 }
 
 @media (max-width: 640px) {
+  .parallax__chapters {
+    grid-template-columns: 1fr;
+  }
+
   .parallax__title {
     font-size: clamp(2.5rem, 14vw, 6.5rem);
     letter-spacing: 0.015em;

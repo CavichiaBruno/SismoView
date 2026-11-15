@@ -45,6 +45,20 @@ descargan desde sus URL públicas.
 
 ## Scripts
 
+Para reproducir las métricas de coherencia del dashboard con el GeoTIFF local
+incluido, instala las dependencias de Node desde la raíz y ejecuta:
+
+```bash
+npm ci
+node scripts/coherence_metrics.mjs
+```
+
+El cálculo usa píxeles finitos entre 0 y 1 (incluidos ceros), centros de píxel
+en un radio de 10 km en EPSG:32619 y el total de píxeles del ráster como
+denominador del porcentaje con coherencia ≥ 0,4. Las métricas del frontend son
+precalculadas; actualízalas si cambia el GeoTIFF. Este cálculo no verifica la
+procedencia del PNG de coherencia.
+
 | Script | Qué hace | Productos principales |
 | --- | --- | --- |
 | [`nisar_gunw.py`](./nisar_gunw.py) | Busca y descarga el producto NISAR GUNW de junio de 2026; inspecciona el interferograma envuelto, estima desplazamiento LOS, reproyecta las capas a latitud/longitud y prepara datos auxiliares de terreno. En sus bloques exploratorios también compara fase/coherencia y examina perfiles. | `franjas.png` y `meta_franjas.json`; `desplazamiento.png`, `meta.json` y `app_data.zip`; `terreno.json`. El bloque de terreno solicita `desplazamiento_cm.tif` si todavía no está en `/content`. |

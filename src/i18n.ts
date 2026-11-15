@@ -14,7 +14,31 @@ const englishTranslations: Record<string, string> = {
   'Activar sonido': 'Turn on sound',
   'Iniciar recorrido': 'Start tour',
   'Ir al dashboard': 'Go to dashboard',
+  'Desliza para descubrir la historia': 'Scroll to discover the story',
+  'Venezuela · Un paisaje en movimiento': 'Venezuela · A landscape in motion',
+  'Cuando la tierra se mueve, ¿qué queda por descubrir?':
+    'When the ground moves, what is left to discover?',
+  'Dos sismos, un territorio y una pregunta: ¿cómo cambió la superficie? Sigue las pistas desde el espacio hasta el terreno.':
+    'Two earthquakes, one landscape, and one question: how did the surface change? Follow the clues from space down to the ground.',
+  'La tierra tiembla': 'The ground shakes',
+  'El caso reúne dos epicentros en Venezuela. Su ubicación es el comienzo de la historia, no un mapa completo de la deformación.':
+    'This case brings together two epicenters in Venezuela. Their location is the beginning of the story, not a complete map of deformation.',
+  'El radar escucha la superficie': 'Radar listens to the surface',
+  'NISAR emite su propia señal y observa de día o de noche, incluso con nubes. Al comparar observaciones, InSAR ayuda a estudiar el movimiento hacia o desde el radar.':
+    'NISAR emits its own signal and observes day or night, even through clouds. By comparing observations, InSAR helps study motion toward or away from the radar.',
+  'De la señal a las preguntas': 'From signals to questions',
+  'Explora fase, coherencia y polarizaciones HH/HV. Una señal puede tener varias causas: contrasta las capas antes de sacar conclusiones sobre el terreno.':
+    'Explore phase, coherence, and HH/HV polarizations. A signal can have several causes: compare the layers before drawing conclusions about the ground.',
+  'Hipótesis de trabajo: la ruptura sísmica pudo deformar la superficie. La coherencia y la geometría de observación limitan dónde y cómo podemos comprobarlo.':
+    'Working hypothesis: the earthquake rupture may have deformed the surface. Coherence and viewing geometry limit where and how we can test it.',
+  'Desde la órbita, NISAR ofrece otra perspectiva: comparar observaciones radar puede revelar cómo se movió la superficie hacia o desde el satélite.':
+    'From orbit, NISAR offers another perspective: comparing radar observations can reveal how the surface moved toward or away from the satellite.',
+  'Acércate al epicentro y sitúa las señales sobre el paisaje. La elevación está exagerada 2,5 veces: es una ayuda visual, no una medida del cambio causado por el sismo.':
+    'Move closer to the epicenter and place the signals in the landscape. Elevation is exaggerated by a factor of 2.5: it is a visual aid, not a measurement of earthquake-related change.',
+  'La última pista es también una pregunta: ¿dónde es fiable la señal? Examina la coherencia y la cobertura antes de interpretar el desplazamiento. Estas observaciones ayudan a orientar estudios posteriores, no sustituyen una evaluación sobre el terreno.':
+    'The final clue is also a question: where is the signal reliable? Examine coherence and coverage before interpreting displacement. These observations can guide further studies, but do not replace an on-the-ground assessment.',
   'NISAR · Observación de la Tierra': 'NISAR · Earth observation',
+  'Cada señal es una pista de una Tierra en movimiento.': 'Every signal is a clue to a changing Earth.',
   'Cada señal revela el movimiento del terreno.': 'Every signal reveals ground motion.',
   'Desplazamiento, fase y coherencia: distintas lecturas de una misma superficie en transformación.':
     'Displacement, phase, and coherence: different views of the same changing surface.',
@@ -24,6 +48,58 @@ const englishTranslations: Record<string, string> = {
   'Representación artística del satélite NISAR en órbita sobre la Tierra':
     'Artist’s rendering of the NISAR satellite in orbit above Earth',
   'Preparando experiencia interactiva': 'Preparing interactive experience',
+  'Ficha de la capa y fuentes': 'Layer information and sources',
+  'Ver script y productos de origen': 'View processing script and source products',
+  'NISAR L2 GCOV · 13 jun y 17 sep 2026 · banda L, HH o HV · retrodispersión gamma-0 en dB. Misma cuadrícula y escala por polarización; no es desplazamiento.':
+    'NISAR L2 GCOV · Jun 13 and Sep 17, 2026 · L-band, HH or HV · gamma-0 backscatter in dB. Same grid and scale per polarization; not displacement.',
+  'NISAR L2 GUNW · 13–25 jun 2026 · banda L, track 162 ascendente. Fase envuelta: ciclo; coherencia: 0–1; desplazamiento LOS: cm, relativo.':
+    'NISAR L2 GUNW · Jun 13–25, 2026 · L-band, ascending track 162. Wrapped phase: cycles; coherence: 0–1; LOS displacement: relative cm.',
+  'Coherencia 0–1 · PNG local. El script examina el GUNW del 13–25 jun 2026, pero no documenta cómo se generó este PNG. Las métricas se calculan por separado a partir del GeoTIFF local.':
+    'Coherence 0–1 · local PNG. The script examines the Jun 13–25, 2026 GUNW product, but does not document how this PNG was generated. Metrics are computed separately from the local GeoTIFF.',
+  'UCSD · productos LOS NISAR, tracks 162 ascendente (13–25 jun) y 54 descendente (17–29 jun). LOS y componentes en mm; gradiente de fase sin unidades de desplazamiento.':
+    'UCSD · NISAR LOS products, ascending track 162 (Jun 13–25) and descending track 54 (Jun 17–29). LOS and components in mm; phase gradient has no displacement units.',
+  'La historia en los datos · Venezuela': 'The story in the data · Venezuela',
+  'Dos fechas. Un territorio. Muchas preguntas.': 'Two dates. One landscape. Many questions.',
+  'Compara el retorno radar antes y después del 24 de junio. Desliza la cortina y cambia de polarización: los cambios no tienen por qué deberse al sismo.':
+    'Compare radar returns before and after June 24. Move the divider and change polarization: differences are not necessarily caused by the earthquake.',
+  'Compara las observaciones GCOV': 'Compare GCOV observations',
+  'Polarización para comparar': 'Polarization to compare',
+  'Comparación: {{title}}; {{left}} frente a {{right}}': 'Comparison: {{title}}; {{left}} versus {{right}}',
+  'Vista cenital': 'Top-down view',
+  'Controles de zoom': 'Zoom controls',
+  'Acercar mapa': 'Zoom in',
+  'Alejar mapa': 'Zoom out',
+  'Restablecer vista': 'Reset view',
+  'Vista cenital sin exageración del relieve. Los puntos señalan los epicentros, no la extensión de la ruptura.':
+    'Top-down view without terrain exaggeration. The points mark the epicenters, not the extent of the rupture.',
+  'Los puntos señalan los epicentros, no la extensión de la ruptura. El relieve está exagerado 8 veces.':
+    'The points mark the epicenters, not the extent of the rupture. Terrain elevation is exaggerated eightfold.',
+  'Descargar cálculo': 'Download calculation',
+  'Un patrón que invita a investigar': 'A pattern worth investigating',
+  'Las franjas del par del 13–25 de junio representan cambios de fase en la región. Por sí solas no identifican la causa ni el desplazamiento total.':
+    'The fringes from the June 13–25 pair represent phase changes across the region. On their own they do not identify the cause or total displacement.',
+  'Ver evidencia': 'View evidence',
+  'El movimiento desde una mirada': 'Movement from one viewpoint',
+  'El mapa LOS estima el cambio relativo de distancia hacia o desde el radar, no el movimiento completo del terreno.':
+    'The LOS map estimates the relative change in distance toward or away from the radar, not the full ground movement.',
+  'No toda la señal es igual de fiable': 'Not all of the signal is equally reliable',
+  'En un radio de 10 km, las medianas del GeoTIFF local son 0,408 en San Felipe y 0,082 en Catia La Mar. Una coherencia baja exige cautela al interpretar la fase.':
+    'Within 10 km, the median values from the local GeoTIFF are 0.408 in San Felipe and 0.082 in Catia La Mar. Low coherence calls for caution when interpreting phase.',
+  'Lo que nos llevamos': 'What we take away',
+  'Observamos:': 'We observe:',
+  'El producto presenta franjas y una estimación de desplazamiento LOS; el 16,7 % del GeoTIFF local cumple el umbral de coherencia γ ≥ 0,4.':
+    'The product shows fringes and an estimated LOS displacement; 16.7% of the local GeoTIFF meets the coherence threshold γ ≥ 0.4.',
+  'Hipótesis:': 'Hypothesis:',
+  'La ruptura sísmica pudo contribuir a la deformación. Los cambios de humedad, vegetación, atmósfera y el procesamiento también pueden influir en las señales.':
+    'Earthquake rupture may have contributed to deformation. Changes in moisture, vegetation, atmosphere, and processing can also influence the signals.',
+  'Por comprobar:': 'To verify:',
+  'Contrastar con otras pasadas, datos independientes y observaciones de campo antes de atribuir la señal a una falla o evaluar daños.':
+    'Compare with other passes, independent data, and field observations before attributing the signal to a fault or assessing damage.',
+  'Amplía el mapa y superpone LOS o coherencia sobre localidades y vías de OpenStreetMap. LOS: −40 a +40 cm; coherencia: 0–1. No es un mapa de daños ni de riesgo.':
+    'Expand the map and overlay LOS or coherence on OpenStreetMap towns and roads. LOS: −40 to +40 cm; coherence: 0–1. This is not a damage or risk map.',
+  'Capa radar sobre el territorio': 'Radar layer over the landscape',
+  'Sin capa radar': 'No radar layer',
+  'No se pudo cargar la capa radar.': 'Could not load the radar layer.',
   'Preparando visualización': 'Preparing visualization',
   'Cargando texturas 3D': 'Loading 3D textures',
   'Calibrando mediciones': 'Calibrating measurements',

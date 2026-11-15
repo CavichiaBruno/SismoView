@@ -1063,6 +1063,22 @@
   background: #f9fafb;
 }
 
+.insar-guide-tools .layer-source-info {
+  color: #475569;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.insar-guide-tools .layer-source-info summary {
+  color: #0369a1;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.insar-guide-tools .layer-source-info a {
+  color: #0369a1;
+}
+
 .insar-guide-layer-label,
 .insar-module-controls > label {
   color: #374151;

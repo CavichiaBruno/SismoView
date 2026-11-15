@@ -1,17 +1,40 @@
 .dash-quality-map {
   display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   min-width: 0;
   align-items: stretch;
 }
 
+.dash-quality-map .layer-source-info {
+  padding: 10px 2px 2px;
+  color: #b6c8d8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.dash-quality-map .layer-source-info summary {
+  color: #7dd3fc;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.dash-quality-map .layer-source-info p {
+  margin: 8px 0;
+}
+
+.dash-quality-map .layer-source-info a {
+  color: #7dd3fc;
+  overflow-wrap: anywhere;
+}
+
 .dash-quality-map__frame {
   position: relative;
   width: 100%;
   min-width: 0;
-  min-height: 0;
-  flex: 1;
+  height: clamp(420px, 55vw, 680px);
+  flex: none;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
@@ -64,13 +87,13 @@
   inset: 0 0 auto;
   display: flex;
   min-width: 0;
-  height: 24px;
+  height: 38px;
   align-items: center;
   gap: 7px;
   padding: 0 9px;
   background: rgb(8 14 24 / 88%);
   color: #e2e8f0;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -93,8 +116,8 @@
 
 .dash-quality-map__navigation button {
   display: grid;
-  width: 21px;
-  height: 18px;
+  width: 28px;
+  height: 26px;
   place-items: center;
   padding: 0;
   border: 0;
@@ -123,7 +146,7 @@
 .dash-quality-map__dates {
   position: absolute;
   z-index: 3;
-  inset: 31px 9px auto;
+  inset: 48px 12px auto;
   display: flex;
   justify-content: space-between;
   pointer-events: none;
@@ -134,12 +157,12 @@
 }
 
 .dash-quality-map__dates span {
-  padding: 4px 6px;
+  padding: 6px 9px;
   border: 1px solid rgb(148 163 184 / 18%);
   border-radius: 4px;
   background: rgb(8 14 24 / 78%);
   color: #e2e8f0;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -155,7 +178,7 @@
   border-radius: 4px;
   background: rgb(8 14 24 / 82%);
   color: #cbd5e1;
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -165,7 +188,7 @@
 .dash-quality-map__divider {
   position: absolute;
   z-index: 3;
-  top: 24px;
+  top: 38px;
   bottom: 0;
   width: 2px;
   transform: translateX(-1px);
@@ -195,10 +218,10 @@
 .dash-quality-map__range {
   position: absolute;
   z-index: 4;
-  top: 24px;
+  top: 38px;
   left: 0;
   width: 100%;
-  height: calc(100% - 24px);
+  height: calc(100% - 38px);
   margin: 0;
   opacity: 0;
   cursor: ew-resize;
@@ -288,6 +311,30 @@
   margin-left: auto;
   color: #64748b;
   white-space: nowrap;
+}
+
+.dash-quality-map__zoom {
+  position: absolute;
+  z-index: 6;
+  right: 12px;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dash-story .dash-quality-map__zoom button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  padding: 0;
+  background: rgb(8 14 24 / 90%);
+  color: #e2e8f0;
+}
+
+.dash-quality-map__zoom button:disabled {
+  cursor: wait;
 }
 
 @media (max-width: 360px) {

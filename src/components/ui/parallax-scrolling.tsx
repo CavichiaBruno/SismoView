@@ -310,6 +310,43 @@ export function ParallaxComponent({
               />
             </div>
             <div className="parallax__fade" />
+            <p className="parallax__scroll-hint">
+              {translate('Desliza para descubrir la historia')}
+              <span aria-hidden="true">↓</span>
+            </p>
+          </div>
+        </section>
+        <section className="parallax__story" aria-labelledby="story-title">
+          <div className="parallax__story-inner">
+            <p className="parallax__story-eyebrow">
+              {translate('Venezuela · Un paisaje en movimiento')}
+            </p>
+            <h2 id="story-title">
+              {translate('Cuando la tierra se mueve, ¿qué queda por descubrir?')}
+            </h2>
+            <p className="parallax__story-intro">
+              {translate('Dos sismos, un territorio y una pregunta: ¿cómo cambió la superficie? Sigue las pistas desde el espacio hasta el terreno.')}
+            </p>
+            <div className="parallax__chapters">
+              <article className="parallax__chapter">
+                <span className="parallax__chapter-number">01</span>
+                <h3>{translate('La tierra tiembla')}</h3>
+                <p>{translate('El caso reúne dos epicentros en Venezuela. Su ubicación es el comienzo de la historia, no un mapa completo de la deformación.')}</p>
+              </article>
+              <article className="parallax__chapter">
+                <span className="parallax__chapter-number">02</span>
+                <h3>{translate('El radar escucha la superficie')}</h3>
+                <p>{translate('NISAR emite su propia señal y observa de día o de noche, incluso con nubes. Al comparar observaciones, InSAR ayuda a estudiar el movimiento hacia o desde el radar.')}</p>
+              </article>
+              <article className="parallax__chapter">
+                <span className="parallax__chapter-number">03</span>
+                <h3>{translate('De la señal a las preguntas')}</h3>
+                <p>{translate('Explora fase, coherencia y polarizaciones HH/HV. Una señal puede tener varias causas: contrasta las capas antes de sacar conclusiones sobre el terreno.')}</p>
+              </article>
+            </div>
+            <p className="parallax__story-note">
+              {translate('Hipótesis de trabajo: la ruptura sísmica pudo deformar la superficie. La coherencia y la geometría de observación limitan dónde y cómo podemos comprobarlo.')}
+            </p>
           </div>
         </section>
         <TiltedGridHero
@@ -333,7 +370,7 @@ export function ParallaxComponent({
                 {translate('NISAR · Observación de la Tierra')}
               </p>
               <h2 className="tilted-grid-hero__title">
-                {translate('Cada señal revela el movimiento del terreno.')}
+                {translate('Cada señal es una pista de una Tierra en movimiento.')}
               </h2>
               <p className="tilted-grid-hero__caption">
                 {translate('Desplazamiento, fase y coherencia: distintas lecturas de una misma superficie en transformación.')}

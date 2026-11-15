@@ -69,7 +69,7 @@ export const TOUR_STEPS: Record<TourStepId, TourStepConfig> = {
     totalSteps: 5,
     badge: translate('Paso 4 · Topografía 3D'),
     title: translate('Inspección cercana del epicentro'),
-    narrative: translate('Vista del terreno alrededor del epicentro. La elevación está exagerada 2,5 veces.'),
+    narrative: translate('Acércate al epicentro y sitúa las señales sobre el paisaje. La elevación está exagerada 2,5 veces: es una ayuda visual, no una medida del cambio causado por el sismo.'),
   },
   dashboard: {
     id: 'dashboard',
@@ -77,7 +77,7 @@ export const TOUR_STEPS: Record<TourStepId, TourStepConfig> = {
     totalSteps: 5,
     badge: translate('Paso 5 · Informe de datos'),
     title: translate('Dashboard analítico NISAR'),
-    narrative: translate('Resumen de los datos científicos del interferograma: coherencia, fase desenvuelta, cobertura y parámetros de la pasada.'),
+    narrative: translate('La última pista es también una pregunta: ¿dónde es fiable la señal? Examina la coherencia y la cobertura antes de interpretar el desplazamiento. Estas observaciones ayudan a orientar estudios posteriores, no sustituyen una evaluación sobre el terreno.'),
   },
 }
 
