@@ -498,7 +498,6 @@ export function CesiumMap({
     if (
       !startupComplete
       || tourStep !== 'nisar_intro'
-      || isProvisioning
       || isProvisioningLeaving
     ) return
 
@@ -548,7 +547,7 @@ export function CesiumMap({
       setIsVoiceIntroClosing(false)
       setIsVoiceIntroComplete(false)
     }
-  }, [isProvisioning, isProvisioningLeaving, startupComplete, tourStep, userHasInteracted])
+  }, [isProvisioningLeaving, startupComplete, tourStep, userHasInteracted])
 
   useEffect(() => {
     if (!isVoiceIntroPlaying) {
@@ -2285,7 +2284,10 @@ export function CesiumMap({
       {tourStep === 'typing' && (
         <TourTypingScreen
           introSoundEnabled={introSoundEnabled}
-          onSkip={startProvisioning}
+          onSkip={() => {
+            startProvisioning()
+            goToStep('nisar_intro')
+          }}
           onComplete={() => {
             startProvisioning()
             goToStep('nisar_intro')
