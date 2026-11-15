@@ -28,7 +28,6 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
           aria-pressed={selectedLanguage === 'es'}
           onClick={() => void changeAppLanguage('es' satisfies AppLanguage)}
         >
-          <span aria-hidden="true">🇪🇸</span>
           <span>ES</span>
         </button>
         <button
@@ -38,7 +37,6 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
           aria-pressed={selectedLanguage === 'en'}
           onClick={() => void changeAppLanguage('en' satisfies AppLanguage)}
         >
-          <span aria-hidden="true">🇬🇧</span>
           <span>EN</span>
         </button>
       </div>

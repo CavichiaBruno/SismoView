@@ -661,8 +661,22 @@ export function AstronautArms({ gestureId, isEarthView }: AstronautArmsProps) {
     const canvas = canvasRef.current
     if (!canvas) return
 
+    const context = canvas.getContext('webgl2', {
+      alpha: true,
+      antialias: true,
+      premultipliedAlpha: true,
+    })
+    if (!context) {
+      console.error('WebGL 2 is unavailable for the astronaut arms.')
+      return
+    }
+
+    context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false)
+    context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
+
     const renderer = new THREE.WebGLRenderer({
       canvas,
+      context,
       antialias: true,
       alpha: true,
     })
@@ -679,7 +693,8 @@ export function AstronautArms({ gestureId, isEarthView }: AstronautArmsProps) {
 
     let mouseX = 0
     let mouseY = 0
-    const clock = new THREE.Clock()
+    const timer = new THREE.Timer()
+    timer.connect(document)
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const resizeObserver = new ResizeObserver(() => {
       const width = window.innerWidth
@@ -695,8 +710,9 @@ export function AstronautArms({ gestureId, isEarthView }: AstronautArmsProps) {
       mouseX = (event.clientX / window.innerWidth) * 2 - 1
       mouseY = (event.clientY / window.innerHeight) * 2 - 1
     }
-    const animate = () => {
-      const delta = Math.min(clock.getDelta(), 0.05)
+    const animate = (timestamp: number) => {
+      timer.update(timestamp)
+      const delta = Math.min(timer.getDelta(), 0.05)
       arms.update(reducedMotion.matches ? 0 : delta, mouseX, mouseY, delta)
       renderer.render(scene, camera)
       if (!hasRenderedFrameRef.current) {
@@ -710,12 +726,13 @@ export function AstronautArms({ gestureId, isEarthView }: AstronautArmsProps) {
     resizeObserver.observe(document.documentElement)
     window.addEventListener('pointermove', updatePointer)
     arms.layout(camera)
-    animate()
+    frameId = window.requestAnimationFrame(animate)
 
     return () => {
       window.cancelAnimationFrame(frameId)
       window.removeEventListener('pointermove', updatePointer)
       resizeObserver.disconnect()
+      timer.dispose()
       rigRef.current = null
       hasRenderedFrameRef.current = false
       scene.traverse((object) => {

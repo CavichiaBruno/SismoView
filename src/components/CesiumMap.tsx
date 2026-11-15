@@ -415,7 +415,7 @@ export function CesiumMap({
   const [isVoiceIntroClosing, setIsVoiceIntroClosing] = useState(false)
   const [isVoiceIntroComplete, setIsVoiceIntroComplete] = useState(false)
   const [voiceSubtitleIndex, setVoiceSubtitleIndex] = useState(-1)
-  const [userHasInteracted, setUserHasInteracted] = useState(false)
+  const [userHasInteracted, setUserHasInteracted] = useState(introSoundEnabled)
   const isVoiceIntroPlayingRef = useRef(false)
   const isMapActive =
     tourStep !== 'wall'
@@ -473,11 +473,7 @@ export function CesiumMap({
     mainThemeAudio.volume = 0
     epicentersAudio.volume = 0
     voiceIntroAudio.volume = 0
-    
-    mainThemeAudio.addEventListener('canplay', () => console.log('main-theme audio ready'))
-    epicentersAudio.addEventListener('canplay', () => console.log('epicentres audio ready'))
-    voiceIntroAudio.addEventListener('canplay', () => console.log('voice-intro audio ready'))
-    
+
     mainThemeAudioRef.current = mainThemeAudio
     epicentersAudioRef.current = epicentersAudio
     voiceIntroAudioRef.current = voiceIntroAudio
@@ -498,6 +494,7 @@ export function CesiumMap({
     if (
       !startupComplete
       || tourStep !== 'nisar_intro'
+      || isProvisioning
       || isProvisioningLeaving
     ) return
 
@@ -547,7 +544,7 @@ export function CesiumMap({
       setIsVoiceIntroClosing(false)
       setIsVoiceIntroComplete(false)
     }
-  }, [isProvisioningLeaving, startupComplete, tourStep, userHasInteracted])
+  }, [isProvisioning, isProvisioningLeaving, startupComplete, tourStep, userHasInteracted])
 
   useEffect(() => {
     if (!isVoiceIntroPlaying) {
@@ -1547,12 +1544,6 @@ export function CesiumMap({
                 return Color.fromCssColorString('#ff3b47').withAlpha(opacity)
               }, false),
             ),
-            outline: true,
-            outlineColor: new CallbackProperty(() => {
-              const opacity = (reducedMotion ? 0.85 : 0.9) * (1 - getWaveProgress())
-              return Color.fromCssColorString('#ff5964').withAlpha(opacity)
-            }, false),
-            outlineWidth: 4,
           },
         })
       }
